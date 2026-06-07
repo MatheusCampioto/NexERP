@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Registrar([FromBody] RegistrarRequest request)
     {
         await _authService.RegistrarAsync(request.Nome, request.Email, request.Senha, request.Perfil);
-        return Created("", new { mensagem = "Usuário criado com sucesso." });
+        return StatusCode(201, new { mensagem = "Usuário criado com sucesso." });
     }
 }
 
