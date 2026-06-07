@@ -69,11 +69,14 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IMovimentacaoEstoqueRepository, MovimentacaoEstoqueRepository>();
+
 
 // Services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<PessoaService>();
 builder.Services.AddScoped<ProdutoService>();
+builder.Services.AddScoped<EstoqueService>();
 
 // CORS para o React
 builder.Services.AddCors(options =>
