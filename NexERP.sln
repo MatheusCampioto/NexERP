@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.API", "NexERP.API\NexERP.API.csproj", "{8AC4322A-DF30-4FDA-A398-D1A88F54896A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Application", "NexERP.Application\NexERP.Application.csproj", "{EE25760A-AF6C-4E4E-9CEC-5E98731D4AFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Domain", "NexERP.Domain\NexERP.Domain.csproj", "{9C6A09ED-4C5E-4371-A780-CAFBE0572BD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Infrastructure", "NexERP.Infrastructure\NexERP.Infrastructure.csproj", "{EBAC542C-F661-4E5B-A818-4C545120B237}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8AC4322A-DF30-4FDA-A398-D1A88F54896A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AC4322A-DF30-4FDA-A398-D1A88F54896A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AC4322A-DF30-4FDA-A398-D1A88F54896A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AC4322A-DF30-4FDA-A398-D1A88F54896A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE25760A-AF6C-4E4E-9CEC-5E98731D4AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE25760A-AF6C-4E4E-9CEC-5E98731D4AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE25760A-AF6C-4E4E-9CEC-5E98731D4AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE25760A-AF6C-4E4E-9CEC-5E98731D4AFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C6A09ED-4C5E-4371-A780-CAFBE0572BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C6A09ED-4C5E-4371-A780-CAFBE0572BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C6A09ED-4C5E-4371-A780-CAFBE0572BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C6A09ED-4C5E-4371-A780-CAFBE0572BD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBAC542C-F661-4E5B-A818-4C545120B237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBAC542C-F661-4E5B-A818-4C545120B237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBAC542C-F661-4E5B-A818-4C545120B237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBAC542C-F661-4E5B-A818-4C545120B237}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
