@@ -13,3 +13,4 @@ C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.dll
 C:\NexERP\NexERP.Application\obj\Debug\net8.0\refint\NexERP.Application.dll
 C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.pdb
 C:\NexERP\NexERP.Application\obj\Debug\net8.0\ref\NexERP.Application.dll
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.sourcelink.json

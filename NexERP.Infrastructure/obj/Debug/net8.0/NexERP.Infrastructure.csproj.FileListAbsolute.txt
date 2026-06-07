@@ -15,3 +15,4 @@ C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\refint\NexERP.Infrastructure.dl
 C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.pdb
 C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.genruntimeconfig.cache
 C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\ref\NexERP.Infrastructure.dll
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.sourcelink.json

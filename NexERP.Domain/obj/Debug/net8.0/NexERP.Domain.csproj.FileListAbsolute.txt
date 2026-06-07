@@ -9,3 +9,4 @@ C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.dll
 C:\NexERP\NexERP.Domain\obj\Debug\net8.0\refint\NexERP.Domain.dll
 C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.pdb
 C:\NexERP\NexERP.Domain\obj\Debug\net8.0\ref\NexERP.Domain.dll
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.sourcelink.json
