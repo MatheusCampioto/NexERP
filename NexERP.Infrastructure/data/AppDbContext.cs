@@ -67,6 +67,10 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
+            entity.Property(e => e.Desconto).HasPrecision(18, 2);
+            entity.Property(e => e.CondicaoPagamento).HasMaxLength(50);
+            entity.Property(e => e.FormaPagamento).HasMaxLength(50);
+            entity.Ignore(e => e.ValorLiquido);
             entity.HasOne(e => e.Pessoa)
                   .WithMany()
                   .HasForeignKey(e => e.PessoaId);
@@ -76,6 +80,7 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.PrecoUnitario).HasPrecision(18, 2);
+            entity.Property(e => e.Desconto).HasPrecision(18, 2);
             entity.Ignore(e => e.Subtotal);
             entity.HasOne(e => e.Pedido)
                   .WithMany(p => p.Itens)

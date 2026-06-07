@@ -25,15 +25,21 @@ public class PedidoService
         => await _pedidoRepository.BuscarPorIdAsync(id);
 
     public async Task<(bool sucesso, string mensagem, Pedido? pedido)> CriarAsync(
-        int pessoaId, string? observacao, List<(int produtoId, int quantidade)> itens)
+        int pessoaId, string? observacao, string? condicaoPagamento,
+        string? formaPagamento, decimal desconto,
+        List<(int produtoId, int quantidade, decimal desconto)> itens)
     {
         var pedido = new Pedido
         {
             PessoaId = pessoaId,
-            Observacao = observacao
+            Observacao = observacao,
+            CondicaoPagamento = condicaoPagamento,
+            FormaPagamento = formaPagamento,
+            Desconto = desconto,
+            Status = "Orcamento"
         };
 
-        foreach (var (produtoId, quantidade) in itens)
+        foreach (var (produtoId, quantidade, descontoItem) in itens)
         {
             var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
             if (produto == null)
@@ -43,11 +49,12 @@ public class PedidoService
             {
                 ProdutoId = produtoId,
                 Quantidade = quantidade,
-                PrecoUnitario = produto.PrecoVenda
+                PrecoUnitario = produto.PrecoVenda,
+                Desconto = descontoItem
             });
         }
 
-        pedido.ValorTotal = pedido.Itens.Sum(i => i.Quantidade * i.PrecoUnitario);
+        pedido.ValorTotal = pedido.Itens.Sum(i => (i.Quantidade * i.PrecoUnitario) - i.Desconto);
 
         await _pedidoRepository.AdicionarAsync(pedido);
         await _pedidoRepository.SalvarAsync();
@@ -55,36 +62,47 @@ public class PedidoService
         return (true, "Pedido criado com sucesso.", pedido);
     }
 
-    public async Task<(bool sucesso, string mensagem)> ConfirmarAsync(int id)
+    public async Task<(bool sucesso, string mensagem)> AvancarStatusAsync(int id)
     {
         var pedido = await _pedidoRepository.BuscarPorIdAsync(id);
         if (pedido == null) return (false, "Pedido não encontrado.");
-        if (pedido.Status != "Aberto") return (false, "Pedido não está aberto.");
 
-        foreach (var item in pedido.Itens)
+        if (pedido.Status == "Orcamento")
         {
-            var produto = await _produtoRepository.BuscarPorIdAsync(item.ProdutoId);
-            if (produto == null) return (false, $"Produto {item.ProdutoId} não encontrado.");
-            if (produto.EstoqueAtual < item.Quantidade)
-                return (false, $"Estoque insuficiente para {produto.Nome}. Estoque atual: {produto.EstoqueAtual}");
-
-            produto.EstoqueAtual -= item.Quantidade;
-            await _produtoRepository.AtualizarAsync(produto);
-
-            await _movimentacaoRepository.AdicionarAsync(new MovimentacaoEstoque
-            {
-                ProdutoId = item.ProdutoId,
-                Tipo = "Saida",
-                Quantidade = item.Quantidade,
-                Observacao = $"Pedido #{id}"
-            });
+            pedido.Status = "Pedido";
+            await _pedidoRepository.AtualizarAsync(pedido);
+            await _pedidoRepository.SalvarAsync();
+            return (true, "Orçamento convertido em Pedido.");
         }
 
-        pedido.Status = "Confirmado";
-        await _pedidoRepository.AtualizarAsync(pedido);
-        await _pedidoRepository.SalvarAsync();
+        if (pedido.Status == "Pedido")
+        {
+            foreach (var item in pedido.Itens)
+            {
+                var produto = await _produtoRepository.BuscarPorIdAsync(item.ProdutoId);
+                if (produto == null) return (false, $"Produto {item.ProdutoId} não encontrado.");
+                if (produto.EstoqueAtual < item.Quantidade)
+                    return (false, $"Estoque insuficiente para {produto.Nome}. Estoque atual: {produto.EstoqueAtual}");
 
-        return (true, "Pedido confirmado e estoque atualizado.");
+                produto.EstoqueAtual -= item.Quantidade;
+                await _produtoRepository.AtualizarAsync(produto);
+
+                await _movimentacaoRepository.AdicionarAsync(new MovimentacaoEstoque
+                {
+                    ProdutoId = item.ProdutoId,
+                    Tipo = "Saida",
+                    Quantidade = item.Quantidade,
+                    Observacao = $"Pedido #{id}"
+                });
+            }
+
+            pedido.Status = "Confirmado";
+            await _pedidoRepository.AtualizarAsync(pedido);
+            await _pedidoRepository.SalvarAsync();
+            return (true, "Pedido confirmado e estoque atualizado.");
+        }
+
+        return (false, "Pedido já está confirmado ou cancelado.");
     }
 
     public async Task<(bool sucesso, string mensagem)> CancelarAsync(int id)
