@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Pessoa> Pessoas { get; set; }
     public DbSet<Produto> Produtos { get; set; }
+    public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,14 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Categoria).HasMaxLength(100);
             entity.Property(e => e.PrecoVenda).HasPrecision(18, 2);
             entity.Property(e => e.PrecoCusto).HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<MovimentacaoEstoque>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Tipo).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Quantidade).IsRequired();
+            entity.Property(e => e.Observacao).HasMaxLength(200);
         });
     }
 }
