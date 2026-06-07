@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<ItemPedido> ItensPedido { get; set; }
     public DbSet<LancamentoFinanceiro> LancamentosFinanceiros { get; set; }
+    public DbSet<ContaBancaria> ContasBancarias { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -90,6 +91,17 @@ public class AppDbContext : DbContext
                   .HasForeignKey(e => e.ProdutoId);
         });
 
+        modelBuilder.Entity<ContaBancaria>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Banco).HasMaxLength(100);
+            entity.Property(e => e.Agencia).HasMaxLength(20);
+            entity.Property(e => e.NumeroConta).HasMaxLength(20);
+            entity.Property(e => e.SaldoInicial).HasPrecision(18, 2);
+            entity.Property(e => e.SaldoAtual).HasPrecision(18, 2);
+        });
+
         modelBuilder.Entity<LancamentoFinanceiro>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -98,6 +110,8 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Valor).HasPrecision(18, 2);
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.Categoria).HasMaxLength(100);
+            entity.Property(e => e.FormaPagamento).HasMaxLength(50);
+            entity.Property(e => e.GrupoParcela).HasMaxLength(50);
             entity.HasOne(e => e.Pessoa)
                   .WithMany()
                   .HasForeignKey(e => e.PessoaId)
@@ -105,6 +119,10 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.Pedido)
                   .WithMany()
                   .HasForeignKey(e => e.PedidoId)
+                  .IsRequired(false);
+            entity.HasOne(e => e.ContaBancaria)
+                  .WithMany()
+                  .HasForeignKey(e => e.ContaBancariaId)
                   .IsRequired(false);
         });
     }

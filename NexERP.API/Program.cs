@@ -76,6 +76,8 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IMovimentacaoEstoqueRepository, MovimentacaoEstoqueRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<ILancamentoFinanceiroRepository, LancamentoFinanceiroRepository>();
+builder.Services.AddScoped<IContaBancariaRepository, ContaBancariaRepository>();
+
 
 // Services
 builder.Services.AddScoped<AuthService>();
@@ -84,6 +86,7 @@ builder.Services.AddScoped<ProdutoService>();
 builder.Services.AddScoped<EstoqueService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<FinanceiroService>();
+builder.Services.AddScoped<ContaBancariaService>();
 
 // CORS para o React
 builder.Services.AddCors(options =>

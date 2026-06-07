@@ -37,13 +37,18 @@ public class FinanceiroController : ControllerBase
         return Ok(lancamento);
     }
 
+    [HttpGet("fluxo-caixa")]
+    public async Task<IActionResult> FluxoDeCaixa([FromQuery] DateTime inicio, [FromQuery] DateTime fim)
+        => Ok(await _financeiroService.FluxoDeCaixaAsync(inicio, fim));
+
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] LancamentoRequest request)
     {
-        var lancamento = await _financeiroService.CriarAsync(
+        var lancamentos = await _financeiroService.CriarAsync(
             request.Tipo, request.Descricao, request.Valor,
-            request.DataVencimento, request.Categoria, request.PessoaId);
-        return StatusCode(201, lancamento);
+            request.DataVencimento, request.Categoria, request.PessoaId,
+            request.FormaPagamento, request.ContaBancariaId, request.TotalParcelas);
+        return StatusCode(201, lancamentos);
     }
 
     [HttpPatch("{id}/baixar")]
@@ -69,5 +74,8 @@ public record LancamentoRequest(
     decimal Valor,
     DateTime DataVencimento,
     string? Categoria,
-    int? PessoaId
+    int? PessoaId,
+    string? FormaPagamento,
+    int? ContaBancariaId,
+    int TotalParcelas = 1
 );
