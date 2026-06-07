@@ -32,9 +32,10 @@ public class PedidosController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] CriarPedidoRequest request)
     {
-        var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade)).ToList();
+        var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
         var (sucesso, mensagem, pedido) = await _pedidoService.CriarAsync(
-            request.PessoaId, request.Observacao, itens);
+            request.PessoaId, request.Observacao, request.CondicaoPagamento,
+            request.FormaPagamento, request.Desconto, itens);
 
         if (!sucesso)
             return BadRequest(new { mensagem });
@@ -42,10 +43,10 @@ public class PedidosController : ControllerBase
         return StatusCode(201, pedido);
     }
 
-    [HttpPatch("{id}/confirmar")]
-    public async Task<IActionResult> Confirmar(int id)
+    [HttpPatch("{id}/avancar")]
+    public async Task<IActionResult> Avancar(int id)
     {
-        var (sucesso, mensagem) = await _pedidoService.ConfirmarAsync(id);
+        var (sucesso, mensagem) = await _pedidoService.AvancarStatusAsync(id);
         if (!sucesso)
             return BadRequest(new { mensagem });
         return Ok(new { mensagem });
@@ -64,7 +65,10 @@ public class PedidosController : ControllerBase
 public record CriarPedidoRequest(
     int PessoaId,
     string? Observacao,
+    string? CondicaoPagamento,
+    string? FormaPagamento,
+    decimal Desconto,
     List<ItemPedidoRequest> Itens
 );
 
-public record ItemPedidoRequest(int ProdutoId, int Quantidade);
+public record ItemPedidoRequest(int ProdutoId, int Quantidade, decimal Desconto);
