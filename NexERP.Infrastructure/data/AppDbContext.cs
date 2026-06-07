@@ -11,6 +11,8 @@ public class AppDbContext : DbContext
     public DbSet<Pessoa> Pessoas { get; set; }
     public DbSet<Produto> Produtos { get; set; }
     public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
+    public DbSet<Pedido> Pedidos { get; set; }
+    public DbSet<ItemPedido> ItensPedido { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,6 +56,32 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Tipo).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Quantidade).IsRequired();
             entity.Property(e => e.Observacao).HasMaxLength(200);
+            entity.HasOne(e => e.Produto)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProdutoId);
+        });
+
+        modelBuilder.Entity<Pedido>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
+            entity.HasOne(e => e.Pessoa)
+                  .WithMany()
+                  .HasForeignKey(e => e.PessoaId);
+        });
+
+        modelBuilder.Entity<ItemPedido>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.PrecoUnitario).HasPrecision(18, 2);
+            entity.Ignore(e => e.Subtotal);
+            entity.HasOne(e => e.Pedido)
+                  .WithMany(p => p.Itens)
+                  .HasForeignKey(e => e.PedidoId);
+            entity.HasOne(e => e.Produto)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProdutoId);
         });
     }
 }
