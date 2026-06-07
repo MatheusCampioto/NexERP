@@ -1,0 +1,15 @@
+C:\NexERP\NexERP.Application\bin\Debug\net8.0\NexERP.Application.deps.json
+C:\NexERP\NexERP.Application\bin\Debug\net8.0\NexERP.Application.dll
+C:\NexERP\NexERP.Application\bin\Debug\net8.0\NexERP.Application.pdb
+C:\NexERP\NexERP.Application\bin\Debug\net8.0\NexERP.Domain.dll
+C:\NexERP\NexERP.Application\bin\Debug\net8.0\NexERP.Domain.pdb
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.csproj.AssemblyReference.cache
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.AssemblyInfoInputs.cache
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.AssemblyInfo.cs
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.csproj.CoreCompileInputs.cache
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.A.40A642BA.Up2Date
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.dll
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\refint\NexERP.Application.dll
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\NexERP.Application.pdb
+C:\NexERP\NexERP.Application\obj\Debug\net8.0\ref\NexERP.Application.dll

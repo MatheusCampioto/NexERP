@@ -1,0 +1,11 @@
+C:\NexERP\NexERP.Domain\bin\Debug\net8.0\NexERP.Domain.deps.json
+C:\NexERP\NexERP.Domain\bin\Debug\net8.0\NexERP.Domain.dll
+C:\NexERP\NexERP.Domain\bin\Debug\net8.0\NexERP.Domain.pdb
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.AssemblyInfoInputs.cache
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.AssemblyInfo.cs
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.csproj.CoreCompileInputs.cache
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.dll
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\refint\NexERP.Domain.dll
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\NexERP.Domain.pdb
+C:\NexERP\NexERP.Domain\obj\Debug\net8.0\ref\NexERP.Domain.dll

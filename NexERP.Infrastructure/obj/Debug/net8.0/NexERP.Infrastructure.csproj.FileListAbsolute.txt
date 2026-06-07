@@ -1,0 +1,17 @@
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Infrastructure.deps.json
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Infrastructure.runtimeconfig.json
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Infrastructure.dll
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Infrastructure.pdb
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Domain.dll
+C:\NexERP\NexERP.Infrastructure\bin\Debug\net8.0\NexERP.Domain.pdb
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.csproj.AssemblyReference.cache
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.AssemblyInfoInputs.cache
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.AssemblyInfo.cs
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.csproj.CoreCompileInputs.cache
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.I.5F975E6B.Up2Date
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.dll
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\refint\NexERP.Infrastructure.dll
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.pdb
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\NexERP.Infrastructure.genruntimeconfig.cache
+C:\NexERP\NexERP.Infrastructure\obj\Debug\net8.0\ref\NexERP.Infrastructure.dll
