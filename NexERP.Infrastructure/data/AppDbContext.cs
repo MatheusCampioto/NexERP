@@ -9,6 +9,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Pessoa> Pessoas { get; set; }
+    public DbSet<Produto> Produtos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,6 +34,17 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Cidade).HasMaxLength(100);
             entity.Property(e => e.Estado).HasMaxLength(2);
             entity.Property(e => e.CEP).HasMaxLength(10);
+        });
+
+        modelBuilder.Entity<Produto>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.Codigo).HasMaxLength(50);
+            entity.Property(e => e.Unidade).HasMaxLength(10);
+            entity.Property(e => e.Categoria).HasMaxLength(100);
+            entity.Property(e => e.PrecoVenda).HasPrecision(18, 2);
+            entity.Property(e => e.PrecoCusto).HasPrecision(18, 2);
         });
     }
 }

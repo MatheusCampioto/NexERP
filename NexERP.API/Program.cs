@@ -7,13 +7,11 @@ using NexERP.Application.Services;
 using NexERP.Domain.Interfaces;
 using NexERP.Infrastructure.Repositories;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
 builder.Services.AddControllers();
 
-// Swagger
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -66,14 +64,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
 // Repositórios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
-builder.Services.AddScoped<PessoaService>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 // Services
 builder.Services.AddScoped<AuthService>();
-
+builder.Services.AddScoped<PessoaService>();
+builder.Services.AddScoped<ProdutoService>();
 
 // CORS para o React
 builder.Services.AddCors(options =>
