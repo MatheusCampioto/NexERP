@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<ItemPedido> ItensPedido { get; set; }
+    public DbSet<LancamentoFinanceiro> LancamentosFinanceiros { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,6 +83,24 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.Produto)
                   .WithMany()
                   .HasForeignKey(e => e.ProdutoId);
+        });
+
+        modelBuilder.Entity<LancamentoFinanceiro>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Tipo).HasMaxLength(20);
+            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Valor).HasPrecision(18, 2);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.Categoria).HasMaxLength(100);
+            entity.HasOne(e => e.Pessoa)
+                  .WithMany()
+                  .HasForeignKey(e => e.PessoaId)
+                  .IsRequired(false);
+            entity.HasOne(e => e.Pedido)
+                  .WithMany()
+                  .HasForeignKey(e => e.PedidoId)
+                  .IsRequired(false);
         });
     }
 }
