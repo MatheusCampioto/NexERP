@@ -7,6 +7,7 @@ using NexERP.Application.Services;
 using NexERP.Domain.Interfaces;
 using NexERP.Infrastructure.Repositories;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
@@ -67,6 +68,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 // Repositórios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
+builder.Services.AddScoped<PessoaService>();
 
 // Services
 builder.Services.AddScoped<AuthService>();
