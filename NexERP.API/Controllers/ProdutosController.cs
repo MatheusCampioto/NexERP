@@ -34,8 +34,8 @@ public class ProdutosController : ControllerBase
     {
         var produto = await _produtoService.CriarAsync(
             request.Nome, request.Descricao, request.Codigo,
-            request.PrecoVenda, request.PrecoCusto, request.Unidade,
-            request.Categoria, request.EstoqueMinimo);
+            request.CodigoBarras, request.PrecoVenda, request.PrecoCusto,
+            request.Unidade, request.CategoriaId, request.EstoqueMinimo);
         return StatusCode(201, produto);
     }
 
@@ -44,8 +44,8 @@ public class ProdutosController : ControllerBase
     {
         var atualizado = await _produtoService.AtualizarAsync(
             id, request.Nome, request.Descricao, request.Codigo,
-            request.PrecoVenda, request.PrecoCusto, request.Unidade,
-            request.Categoria, request.EstoqueMinimo);
+            request.CodigoBarras, request.PrecoVenda, request.PrecoCusto,
+            request.Unidade, request.CategoriaId, request.EstoqueMinimo);
 
         if (!atualizado)
             return NotFound(new { mensagem = "Produto não encontrado." });
@@ -66,9 +66,10 @@ public record ProdutoRequest(
     string Nome,
     string? Descricao,
     string? Codigo,
+    string? CodigoBarras,
     decimal PrecoVenda,
     decimal PrecoCusto,
     string? Unidade,
-    string? Categoria,
+    int? CategoriaId,
     int EstoqueMinimo
 );

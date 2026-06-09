@@ -19,17 +19,19 @@ public class ProdutoService
         => await _produtoRepository.BuscarPorIdAsync(id);
 
     public async Task<Produto> CriarAsync(string nome, string? descricao, string? codigo,
-        decimal precoVenda, decimal precoCusto, string? unidade, string? categoria, int estoqueMinimo)
+        string? codigoBarras, decimal precoVenda, decimal precoCusto,
+        string? unidade, int? categoriaId, int estoqueMinimo)
     {
         var produto = new Produto
         {
             Nome = nome,
             Descricao = descricao,
             Codigo = codigo,
+            CodigoBarras = codigoBarras,
             PrecoVenda = precoVenda,
             PrecoCusto = precoCusto,
             Unidade = unidade,
-            Categoria = categoria,
+            CategoriaId = categoriaId,
             EstoqueMinimo = estoqueMinimo
         };
 
@@ -39,7 +41,8 @@ public class ProdutoService
     }
 
     public async Task<bool> AtualizarAsync(int id, string nome, string? descricao, string? codigo,
-        decimal precoVenda, decimal precoCusto, string? unidade, string? categoria, int estoqueMinimo)
+        string? codigoBarras, decimal precoVenda, decimal precoCusto,
+        string? unidade, int? categoriaId, int estoqueMinimo)
     {
         var produto = await _produtoRepository.BuscarPorIdAsync(id);
         if (produto == null) return false;
@@ -47,10 +50,11 @@ public class ProdutoService
         produto.Nome = nome;
         produto.Descricao = descricao;
         produto.Codigo = codigo;
+        produto.CodigoBarras = codigoBarras;
         produto.PrecoVenda = precoVenda;
         produto.PrecoCusto = precoCusto;
         produto.Unidade = unidade;
-        produto.Categoria = categoria;
+        produto.CategoriaId = categoriaId;
         produto.EstoqueMinimo = estoqueMinimo;
 
         await _produtoRepository.AtualizarAsync(produto);
