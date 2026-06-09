@@ -14,6 +14,9 @@ public class UsuarioRepository : IUsuarioRepository
         _context = context;
     }
 
+    public async Task<IEnumerable<Usuario>> ListarTodosAsync()
+        => await _context.Usuarios.ToListAsync();
+
     public async Task<Usuario?> BuscarPorEmailAsync(string email)
         => await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
 

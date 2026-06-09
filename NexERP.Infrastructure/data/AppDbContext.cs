@@ -26,6 +26,13 @@ public class AppDbContext : DbContext
             entity.HasIndex(e => e.Email).IsUnique();
             entity.Property(e => e.SenhaHash).IsRequired();
             entity.Property(e => e.Perfil).HasMaxLength(20);
+            entity.Property(e => e.AcessoPessoas).HasDefaultValue(true);
+            entity.Property(e => e.AcessoProdutos).HasDefaultValue(true);
+            entity.Property(e => e.AcessoEstoque).HasDefaultValue(true);
+            entity.Property(e => e.AcessoPedidos).HasDefaultValue(true);
+            entity.Property(e => e.AcessoFinanceiro).HasDefaultValue(false);
+            entity.Property(e => e.AcessoRelatorios).HasDefaultValue(false);
+            entity.Property(e => e.AcessoUsuarios).HasDefaultValue(false);
         });
 
         modelBuilder.Entity<Pessoa>(entity =>

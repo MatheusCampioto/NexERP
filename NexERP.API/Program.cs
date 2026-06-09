@@ -78,7 +78,6 @@ builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<ILancamentoFinanceiroRepository, LancamentoFinanceiroRepository>();
 builder.Services.AddScoped<IContaBancariaRepository, ContaBancariaRepository>();
 
-
 // Services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<PessoaService>();
@@ -87,13 +86,14 @@ builder.Services.AddScoped<EstoqueService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<FinanceiroService>();
 builder.Services.AddScoped<ContaBancariaService>();
+builder.Services.AddScoped<UsuarioService>();
 
 // CORS para o React
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3002")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -107,7 +107,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
