@@ -18,6 +18,12 @@ public class EstoqueService
     public async Task<IEnumerable<MovimentacaoEstoque>> ListarMovimentacoesPorProdutoAsync(int produtoId)
         => await _movimentacaoRepository.ListarPorProdutoAsync(produtoId);
 
+    public async Task<IEnumerable<Produto>> ListarProdutosEstoqueBaixoAsync()
+    {
+        var produtos = await _produtoRepository.ListarTodosAsync();
+        return produtos.Where(p => p.EstoqueAtual <= p.EstoqueMinimo);
+    }
+
     public async Task<(bool sucesso, string mensagem)> MovimentarAsync(int produtoId, string tipo, int quantidade, string? observacao)
     {
         var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
@@ -45,5 +51,35 @@ public class EstoqueService
         await _movimentacaoRepository.SalvarAsync();
 
         return (true, "Movimentação realizada com sucesso.");
+    }
+
+    public async Task<(bool sucesso, string mensagem)> AjustarInventarioAsync(int produtoId, int quantidadeReal, string? observacao)
+    {
+        var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
+        if (produto == null)
+            return (false, "Produto não encontrado.");
+
+        var diferenca = quantidadeReal - produto.EstoqueAtual;
+        if (diferenca == 0)
+            return (true, "Estoque já está correto.");
+
+        var tipo = diferenca > 0 ? "Entrada" : "Saida";
+        var quantidade = Math.Abs(diferenca);
+
+        var movimentacao = new MovimentacaoEstoque
+        {
+            ProdutoId = produtoId,
+            Tipo = tipo,
+            Quantidade = quantidade,
+            Observacao = observacao ?? $"Ajuste de inventário — de {produto.EstoqueAtual} para {quantidadeReal}"
+        };
+
+        produto.EstoqueAtual = quantidadeReal;
+
+        await _movimentacaoRepository.AdicionarAsync(movimentacao);
+        await _produtoRepository.AtualizarAsync(produto);
+        await _movimentacaoRepository.SalvarAsync();
+
+        return (true, $"Inventário ajustado. Diferença: {(diferenca > 0 ? "+" : "")}{diferenca}");
     }
 }

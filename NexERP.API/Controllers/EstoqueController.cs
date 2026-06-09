@@ -20,6 +20,10 @@ public class EstoqueController : ControllerBase
     public async Task<IActionResult> ListarMovimentacoes(int produtoId)
         => Ok(await _estoqueService.ListarMovimentacoesPorProdutoAsync(produtoId));
 
+    [HttpGet("baixo-estoque")]
+    public async Task<IActionResult> EstoqueBaixo()
+        => Ok(await _estoqueService.ListarProdutosEstoqueBaixoAsync());
+
     [HttpPost]
     public async Task<IActionResult> Movimentar([FromBody] MovimentacaoRequest request)
     {
@@ -31,11 +35,19 @@ public class EstoqueController : ControllerBase
 
         return StatusCode(201, new { mensagem });
     }
+
+    [HttpPost("inventario")]
+    public async Task<IActionResult> AjustarInventario([FromBody] InventarioRequest request)
+    {
+        var (sucesso, mensagem) = await _estoqueService.AjustarInventarioAsync(
+            request.ProdutoId, request.QuantidadeReal, request.Observacao);
+
+        if (!sucesso)
+            return BadRequest(new { mensagem });
+
+        return Ok(new { mensagem });
+    }
 }
 
-public record MovimentacaoRequest(
-    int ProdutoId,
-    string Tipo,
-    int Quantidade,
-    string? Observacao
-);
+public record MovimentacaoRequest(int ProdutoId, string Tipo, int Quantidade, string? Observacao);
+public record InventarioRequest(int ProdutoId, int QuantidadeReal, string? Observacao);
