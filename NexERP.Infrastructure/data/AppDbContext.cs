@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Pessoa> Pessoas { get; set; }
     public DbSet<Produto> Produtos { get; set; }
+    public DbSet<Categoria> Categorias { get; set; }
     public DbSet<MovimentacaoEstoque> MovimentacoesEstoque { get; set; }
     public DbSet<Pedido> Pedidos { get; set; }
     public DbSet<ItemPedido> ItensPedido { get; set; }
@@ -48,15 +49,26 @@ public class AppDbContext : DbContext
             entity.Property(e => e.CEP).HasMaxLength(10);
         });
 
+        modelBuilder.Entity<Categoria>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Descricao).HasMaxLength(200);
+        });
+
         modelBuilder.Entity<Produto>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
             entity.Property(e => e.Codigo).HasMaxLength(50);
+            entity.Property(e => e.CodigoBarras).HasMaxLength(50);
             entity.Property(e => e.Unidade).HasMaxLength(10);
-            entity.Property(e => e.Categoria).HasMaxLength(100);
             entity.Property(e => e.PrecoVenda).HasPrecision(18, 2);
             entity.Property(e => e.PrecoCusto).HasPrecision(18, 2);
+            entity.HasOne(e => e.Categoria)
+                  .WithMany()
+                  .HasForeignKey(e => e.CategoriaId)
+                  .IsRequired(false);
         });
 
         modelBuilder.Entity<MovimentacaoEstoque>(entity =>
