@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NexERP.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85303222cad1f749391a0d1599073960ecc396dd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3ad08569175469fed053919c6cad965d82b0e064")]
 [assembly: System.Reflection.AssemblyProductAttribute("NexERP.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NexERP.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
