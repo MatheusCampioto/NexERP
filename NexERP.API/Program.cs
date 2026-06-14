@@ -92,6 +92,14 @@ builder.Services.AddScoped<ContaBancariaService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<CategoriaService>();
 builder.Services.AddScoped<OrdemServicoService>();
+builder.Services.AddScoped<ICondicaoPagamentoRepository, CondicaoPagamentoRepository>();
+builder.Services.AddScoped<ISolicitacaoCompraRepository, SolicitacaoCompraRepository>();
+builder.Services.AddScoped<IOrdemCompraRepository, OrdemCompraRepository>();
+builder.Services.AddScoped<INotaFiscalEntradaRepository, NotaFiscalEntradaRepository>();
+builder.Services.AddScoped<CondicaoPagamentoService>();
+builder.Services.AddScoped<SolicitacaoCompraService>();
+builder.Services.AddScoped<OrdemCompraService>();
+builder.Services.AddScoped<NotaFiscalEntradaService>();
 
 
 // CORS para o React
@@ -99,7 +107,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:3002")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:3002")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
