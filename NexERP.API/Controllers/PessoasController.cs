@@ -18,10 +18,7 @@ public class PessoasController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> Listar()
-    {
-        var pessoas = await _pessoaService.ListarTodosAsync();
-        return Ok(pessoas);
-    }
+        => Ok(await _pessoaService.ListarTodosAsync());
 
     [HttpGet("{id}")]
     public async Task<IActionResult> BuscarPorId(int id)
@@ -35,25 +32,16 @@ public class PessoasController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar([FromBody] PessoaRequest request)
     {
-        var pessoa = await _pessoaService.CriarAsync(
-            request.Nome, request.Tipo, request.CpfCnpj,
-            request.Email, request.Telefone, request.Endereco,
-            request.Cidade, request.Estado, request.Cep);
-
+        var pessoa = await _pessoaService.CriarAsync(request.ToDto());
         return StatusCode(201, pessoa);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] PessoaRequest request)
     {
-        var atualizado = await _pessoaService.AtualizarAsync(
-            id, request.Nome, request.Tipo, request.CpfCnpj,
-            request.Email, request.Telefone, request.Endereco,
-            request.Cidade, request.Estado, request.Cep);
-
+        var atualizado = await _pessoaService.AtualizarAsync(id, request.ToDto());
         if (!atualizado)
             return NotFound(new { mensagem = "Pessoa não encontrada." });
-
         return NoContent();
     }
 
@@ -63,19 +51,45 @@ public class PessoasController : ControllerBase
         var desativado = await _pessoaService.DesativarAsync(id);
         if (!desativado)
             return NotFound(new { mensagem = "Pessoa não encontrada." });
-
         return NoContent();
     }
 }
 
 public record PessoaRequest(
-    string Nome,
+    string TipoDocumento,
     string Tipo,
-    string? CpfCnpj,
+    string? Funcao,
+    string? Nome,
+    string? CPF,
+    string? RG,
+    DateTime? DataNascimento,
+    string? EstadoCivil,
+    string? Profissao,
+    string? RazaoSocial,
+    string? NomeFantasia,
+    string? CNPJ,
+    string? InscricaoEstadual,
+    string? InscricaoMunicipal,
+    string? NomeContato,
+    string? Site,
     string? Email,
     string? Telefone,
+    string? Celular,
+    string? CEP,
     string? Endereco,
+    string? Numero,
+    string? Complemento,
+    string? Bairro,
     string? Cidade,
     string? Estado,
-    string? Cep
-);
+    string? Observacao
+)
+{
+    public PessoaDto ToDto() => new(
+        TipoDocumento, Tipo, Funcao, Nome, CPF, RG, DataNascimento,
+        EstadoCivil, Profissao, RazaoSocial, NomeFantasia, CNPJ,
+        InscricaoEstadual, InscricaoMunicipal, NomeContato, Site,
+        Email, Telefone, Celular, CEP, Endereco, Numero, Complemento,
+        Bairro, Cidade, Estado, Observacao
+    );
+}
