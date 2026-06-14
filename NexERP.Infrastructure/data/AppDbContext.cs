@@ -18,6 +18,13 @@ public class AppDbContext : DbContext
     public DbSet<ContaBancaria> ContasBancarias { get; set; }
     public DbSet<OrdemServico> OrdensServico { get; set; }
     public DbSet<ItemOrdemServico> ItensOrdemServico { get; set; }
+    public DbSet<CondicaoPagamento> CondicoesPagamento { get; set; }
+    public DbSet<SolicitacaoCompra> SolicitacoesCompra { get; set; }
+    public DbSet<ItemSolicitacaoCompra> ItensSolicitacaoCompra { get; set; }
+    public DbSet<OrdemCompra> OrdensCompra { get; set; }
+    public DbSet<ItemOrdemCompra> ItensOrdemCompra { get; set; }
+    public DbSet<NotaFiscalEntrada> NotasFiscaisEntrada { get; set; }
+    public DbSet<ItemNotaFiscalEntrada> ItensNotaFiscalEntrada { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,13 +51,11 @@ public class AppDbContext : DbContext
             entity.Property(e => e.TipoDocumento).HasMaxLength(10);
             entity.Property(e => e.Tipo).HasMaxLength(20);
             entity.Property(e => e.Funcao).HasMaxLength(100);
-
             entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
             entity.Property(e => e.CPF).HasMaxLength(14);
             entity.Property(e => e.RG).HasMaxLength(20);
             entity.Property(e => e.EstadoCivil).HasMaxLength(20);
             entity.Property(e => e.Profissao).HasMaxLength(100);
-
             entity.Property(e => e.RazaoSocial).HasMaxLength(150);
             entity.Property(e => e.NomeFantasia).HasMaxLength(150);
             entity.Property(e => e.CNPJ).HasMaxLength(18);
@@ -58,11 +63,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.InscricaoMunicipal).HasMaxLength(20);
             entity.Property(e => e.NomeContato).HasMaxLength(150);
             entity.Property(e => e.Site).HasMaxLength(200);
-
             entity.Property(e => e.Email).HasMaxLength(150);
             entity.Property(e => e.Telefone).HasMaxLength(20);
             entity.Property(e => e.Celular).HasMaxLength(20);
-
             entity.Property(e => e.CEP).HasMaxLength(10);
             entity.Property(e => e.Endereco).HasMaxLength(200);
             entity.Property(e => e.Numero).HasMaxLength(10);
@@ -192,6 +195,103 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.OrdemServico)
                   .WithMany(o => o.Itens)
                   .HasForeignKey(e => e.OrdemServicoId);
+        });
+
+        modelBuilder.Entity<CondicaoPagamento>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Descricao).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<SolicitacaoCompra>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.MotivoReprovacao).HasMaxLength(500);
+            entity.HasOne(e => e.Usuario)
+                  .WithMany()
+                  .HasForeignKey(e => e.UsuarioId);
+        });
+
+        modelBuilder.Entity<ItemSolicitacaoCompra>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Quantidade).HasPrecision(18, 2);
+            entity.Property(e => e.Unidade).HasMaxLength(10);
+            entity.HasOne(e => e.SolicitacaoCompra)
+                  .WithMany(s => s.Itens)
+                  .HasForeignKey(e => e.SolicitacaoCompraId);
+            entity.HasOne(e => e.Produto)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProdutoId)
+                  .IsRequired(false);
+        });
+
+        modelBuilder.Entity<OrdemCompra>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
+            entity.HasOne(e => e.Fornecedor)
+                  .WithMany()
+                  .HasForeignKey(e => e.FornecedorId);
+            entity.HasOne(e => e.SolicitacaoCompra)
+                  .WithMany()
+                  .HasForeignKey(e => e.SolicitacaoCompraId)
+                  .IsRequired(false);
+            entity.HasOne(e => e.CondicaoPagamento)
+                  .WithMany()
+                  .HasForeignKey(e => e.CondicaoPagamentoId)
+                  .IsRequired(false);
+        });
+
+        modelBuilder.Entity<ItemOrdemCompra>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Quantidade).HasPrecision(18, 2);
+            entity.Property(e => e.ValorUnitario).HasPrecision(18, 2);
+            entity.Ignore(e => e.Subtotal);
+            entity.HasOne(e => e.OrdemCompra)
+                  .WithMany(o => o.Itens)
+                  .HasForeignKey(e => e.OrdemCompraId);
+            entity.HasOne(e => e.Produto)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProdutoId)
+                  .IsRequired(false);
+        });
+
+        modelBuilder.Entity<NotaFiscalEntrada>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NumeroNF).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Serie).HasMaxLength(5);
+            entity.Property(e => e.ChaveAcesso).HasMaxLength(44);
+            entity.Property(e => e.ValorProdutos).HasPrecision(18, 2);
+            entity.Property(e => e.ValorFrete).HasPrecision(18, 2);
+            entity.Property(e => e.ValorImpostos).HasPrecision(18, 2);
+            entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
+            entity.HasOne(e => e.OrdemCompra)
+                  .WithMany()
+                  .HasForeignKey(e => e.OrdemCompraId);
+        });
+
+        modelBuilder.Entity<ItemNotaFiscalEntrada>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Quantidade).HasPrecision(18, 2);
+            entity.Property(e => e.ValorUnitario).HasPrecision(18, 2);
+            entity.Ignore(e => e.ValorTotal);
+            entity.HasOne(e => e.NotaFiscalEntrada)
+                  .WithMany(n => n.Itens)
+                  .HasForeignKey(e => e.NotaFiscalEntradaId);
+            entity.HasOne(e => e.Produto)
+                  .WithMany()
+                  .HasForeignKey(e => e.ProdutoId)
+                  .IsRequired(false);
         });
     }
 }
