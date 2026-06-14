@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem C:\\\\ -Depth 1 | Where-Object { $_.Name -match \"front|react|next|vue|angular|client|web|nexerp\" -and $_.PSIsContainer } | Select-Object FullName)",
+      "Read(//c/nexerp-frontend/src/**)",
+      "Read(//c/nexerp-frontend/**)",
+      "PowerShell(netstat -ano)"
+    ]
+  }
+}

@@ -78,6 +78,8 @@ builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<ILancamentoFinanceiroRepository, LancamentoFinanceiroRepository>();
 builder.Services.AddScoped<IContaBancariaRepository, ContaBancariaRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
+
 
 // Services
 builder.Services.AddScoped<AuthService>();
@@ -89,6 +91,8 @@ builder.Services.AddScoped<FinanceiroService>();
 builder.Services.AddScoped<ContaBancariaService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<CategoriaService>();
+builder.Services.AddScoped<OrdemServicoService>();
+
 
 // CORS para o React
 builder.Services.AddCors(options =>
