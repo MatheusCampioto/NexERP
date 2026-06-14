@@ -16,6 +16,8 @@ public class AppDbContext : DbContext
     public DbSet<ItemPedido> ItensPedido { get; set; }
     public DbSet<LancamentoFinanceiro> LancamentosFinanceiros { get; set; }
     public DbSet<ContaBancaria> ContasBancarias { get; set; }
+    public DbSet<OrdemServico> OrdensServico { get; set; }
+    public DbSet<ItemOrdemServico> ItensOrdemServico { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -143,6 +145,32 @@ public class AppDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(e => e.ContaBancariaId)
                   .IsRequired(false);
+        });
+
+        modelBuilder.Entity<OrdemServico>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Status).HasMaxLength(20);
+            entity.Property(e => e.Prioridade).HasMaxLength(20);
+            entity.Property(e => e.Tecnico).HasMaxLength(100);
+            entity.Property(e => e.ValorEstimado).HasPrecision(18, 2);
+            entity.Property(e => e.ValorFinal).HasPrecision(18, 2);
+            entity.HasOne(e => e.Pessoa)
+                  .WithMany()
+                  .HasForeignKey(e => e.PessoaId);
+        });
+
+        modelBuilder.Entity<ItemOrdemServico>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Descricao).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Quantidade).HasPrecision(18, 2);
+            entity.Property(e => e.ValorUnitario).HasPrecision(18, 2);
+            entity.Ignore(e => e.Subtotal);
+            entity.HasOne(e => e.OrdemServico)
+                  .WithMany(o => o.Itens)
+                  .HasForeignKey(e => e.OrdemServicoId);
         });
     }
 }
