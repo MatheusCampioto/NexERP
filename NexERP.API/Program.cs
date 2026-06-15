@@ -100,6 +100,8 @@ builder.Services.AddScoped<CondicaoPagamentoService>();
 builder.Services.AddScoped<SolicitacaoCompraService>();
 builder.Services.AddScoped<OrdemCompraService>();
 builder.Services.AddScoped<NotaFiscalEntradaService>();
+builder.Services.AddScoped<IConfiguracaoSistemaRepository, ConfiguracaoSistemaRepository>();
+builder.Services.AddScoped<ConfiguracaoSistemaService>();
 
 
 // CORS para o React

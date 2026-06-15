@@ -25,9 +25,38 @@ public class AppDbContext : DbContext
     public DbSet<ItemOrdemCompra> ItensOrdemCompra { get; set; }
     public DbSet<NotaFiscalEntrada> NotasFiscaisEntrada { get; set; }
     public DbSet<ItemNotaFiscalEntrada> ItensNotaFiscalEntrada { get; set; }
+    public DbSet<ConfiguracaoSistema> ConfiguracoesSistema { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder )
     {
+
+      modelBuilder.Entity<ConfiguracaoSistema>(entity =>
+{
+    entity.HasKey(e => e.Id);
+    entity.Property(e => e.NomeEmpresa).IsRequired().HasMaxLength(150);
+    entity.Property(e => e.NomeFantasia).HasMaxLength(150);
+    entity.Property(e => e.CNPJ).HasMaxLength(18);
+    entity.Property(e => e.InscricaoEstadual).HasMaxLength(20);
+    entity.Property(e => e.InscricaoMunicipal).HasMaxLength(20);
+    entity.Property(e => e.RegimeTributario).HasMaxLength(20);
+    entity.Property(e => e.Email).HasMaxLength(150);
+    entity.Property(e => e.Telefone).HasMaxLength(20);
+    entity.Property(e => e.Site).HasMaxLength(200);
+    entity.Property(e => e.CEP).HasMaxLength(10);
+    entity.Property(e => e.Endereco).HasMaxLength(200);
+    entity.Property(e => e.Numero).HasMaxLength(10);
+    entity.Property(e => e.Complemento).HasMaxLength(100);
+    entity.Property(e => e.Bairro).HasMaxLength(100);
+    entity.Property(e => e.Cidade).HasMaxLength(100);
+    entity.Property(e => e.Estado).HasMaxLength(2);
+    entity.Property(e => e.CFOP_PadraoVenda).HasMaxLength(10);
+    entity.Property(e => e.CFOP_PadraoCompra).HasMaxLength(10);
+    entity.Property(e => e.AliquotaICMS_Padrao).HasPrecision(18, 4);
+    entity.Property(e => e.AliquotaPIS_Padrao).HasPrecision(18, 4);
+    entity.Property(e => e.AliquotaCOFINS_Padrao).HasPrecision(18, 4);
+    entity.Property(e => e.MoedaSimbolo).HasMaxLength(5);
+});
+
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.Id);
