@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NexERP.Application.Services;
 using NexERP.Domain.Interfaces;
+using System.Security.Claims;
 
 namespace NexERP.API.Controllers;
 
@@ -64,6 +65,17 @@ public class UsuariosController : ControllerBase
     [HttpPatch("{id}/senha")]
     public async Task<IActionResult> AlterarSenha(int id, [FromBody] AlterarSenhaRequest request)
     {
+        var (sucesso, mensagem) = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
+        if (!sucesso) return BadRequest(new { mensagem });
+        return Ok(new { mensagem });
+    }
+
+    [HttpPut("alterar-senha")]
+    public async Task<IActionResult> AlterarSenhaPropria([FromBody] AlterarSenhaRequest request)
+    {
+        var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (idClaim == null) return Unauthorized();
+        var id = int.Parse(idClaim);
         var (sucesso, mensagem) = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
         if (!sucesso) return BadRequest(new { mensagem });
         return Ok(new { mensagem });
