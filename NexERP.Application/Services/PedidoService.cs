@@ -62,6 +62,46 @@ public class PedidoService
         return (true, "Pedido criado com sucesso.", pedido);
     }
 
+    public async Task<(bool sucesso, string mensagem)> AtualizarAsync(
+        int id, int pessoaId, string? observacao, string? condicaoPagamento,
+        string? formaPagamento, decimal desconto,
+        List<(int produtoId, int quantidade, decimal desconto)> itens)
+    {
+        var pedido = await _pedidoRepository.BuscarPorIdAsync(id);
+        if (pedido == null) return (false, "Pedido não encontrado.");
+        if (pedido.Status == "Confirmado" || pedido.Status == "Cancelado")
+            return (false, "Pedido não pode ser editado neste status.");
+
+        pedido.PessoaId = pessoaId;
+        pedido.Observacao = observacao;
+        pedido.CondicaoPagamento = condicaoPagamento;
+        pedido.FormaPagamento = formaPagamento;
+        pedido.Desconto = desconto;
+
+        pedido.Itens.Clear();
+
+        foreach (var (produtoId, quantidade, descontoItem) in itens)
+        {
+            var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
+            if (produto == null) return (false, $"Produto {produtoId} não encontrado.");
+
+            pedido.Itens.Add(new ItemPedido
+            {
+                ProdutoId = produtoId,
+                Quantidade = quantidade,
+                PrecoUnitario = produto.PrecoVenda,
+                Desconto = descontoItem
+            });
+        }
+
+        pedido.ValorTotal = pedido.Itens.Sum(i => (i.Quantidade * i.PrecoUnitario) - i.Desconto);
+
+        await _pedidoRepository.AtualizarAsync(pedido);
+        await _pedidoRepository.SalvarAsync();
+
+        return (true, "Pedido atualizado com sucesso.");
+    }
+
     public async Task<(bool sucesso, string mensagem)> AvancarStatusAsync(int id)
     {
         var pedido = await _pedidoRepository.BuscarPorIdAsync(id);

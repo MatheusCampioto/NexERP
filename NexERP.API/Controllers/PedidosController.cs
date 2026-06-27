@@ -43,6 +43,20 @@ public class PedidosController : ControllerBase
         return StatusCode(201, pedido);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarPedidoRequest request)
+    {
+        var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
+        var (sucesso, mensagem) = await _pedidoService.AtualizarAsync(
+            id, request.PessoaId, request.Observacao, request.CondicaoPagamento,
+            request.FormaPagamento, request.Desconto, itens);
+
+        if (!sucesso)
+            return BadRequest(new { mensagem });
+
+        return NoContent();
+    }
+
     [HttpPatch("{id}/avancar")]
     public async Task<IActionResult> Avancar(int id)
     {
@@ -63,6 +77,15 @@ public class PedidosController : ControllerBase
 }
 
 public record CriarPedidoRequest(
+    int PessoaId,
+    string? Observacao,
+    string? CondicaoPagamento,
+    string? FormaPagamento,
+    decimal Desconto,
+    List<ItemPedidoRequest> Itens
+);
+
+public record AtualizarPedidoRequest(
     int PessoaId,
     string? Observacao,
     string? CondicaoPagamento,
