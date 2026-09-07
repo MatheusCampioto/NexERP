@@ -23,8 +23,11 @@ public class FilialRepository : IFilialRepository
     public async Task AdicionarAsync(Filial filial)
         => await _context.Filiais.AddAsync(filial);
 
-    public async Task AtualizarAsync(Filial filial)
-        => _context.Filiais.Update(filial);
+    public Task AtualizarAsync(Filial filial)
+    {
+        _context.Filiais.Update(filial);
+        return Task.CompletedTask;
+    }
 
     public async Task SalvarAsync()
         => await _context.SaveChangesAsync();
