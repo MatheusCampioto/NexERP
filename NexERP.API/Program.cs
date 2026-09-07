@@ -7,6 +7,7 @@ using NexERP.Application.Services;
 using NexERP.Domain.Interfaces;
 using NexERP.Infrastructure.Repositories;
 using NexERP.Infrastructure;
+using NexERP.Application.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,14 +92,14 @@ builder.Services.AddScoped<IConfiguracaoSistemaRepository, ConfiguracaoSistemaRe
 builder.Services.AddScoped<IFilialRepository, FilialRepository>();
 
 // Services
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<PessoaService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPessoaService, PessoaService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<ProdutoService>();
 builder.Services.AddScoped<EstoqueService>();
-builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<FinanceiroService>();
 builder.Services.AddScoped<ContaBancariaService>();
-builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<CategoriaService>();
 builder.Services.AddScoped<OrdemServicoService>();
 builder.Services.AddScoped<CondicaoPagamentoService>();

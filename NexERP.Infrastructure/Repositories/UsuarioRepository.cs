@@ -5,27 +5,10 @@ using NexERP.Infrastructure.Data;
 
 namespace NexERP.Infrastructure.Repositories;
 
-public class UsuarioRepository : IUsuarioRepository
+public class UsuarioRepository : BaseRepository<Usuario>, IUsuarioRepository
 {
-    private readonly AppDbContext _context;
-
-    public UsuarioRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-
-    public async Task<IEnumerable<Usuario>> ListarTodosAsync()
-        => await _context.Usuarios.ToListAsync();
+    public UsuarioRepository(AppDbContext context) : base(context) { }
 
     public async Task<Usuario?> BuscarPorEmailAsync(string email)
-        => await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
-
-    public async Task<Usuario?> BuscarPorIdAsync(int id)
-        => await _context.Usuarios.FindAsync(id);
-
-    public async Task AdicionarAsync(Usuario usuario)
-        => await _context.Usuarios.AddAsync(usuario);
-
-    public async Task SalvarAsync()
-        => await _context.SaveChangesAsync();
+        => await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
 }
