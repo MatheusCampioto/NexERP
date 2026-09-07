@@ -47,7 +47,7 @@ public class PessoaServiceTests
     [Fact]
     public async Task AtualizarAsync_PessoaExistente_DeveRetornarTrue()
     {
-        var pessoa = new Pessoa { Nome = "Antigo" };
+        var pessoa = new Pessoa("Antigo", "CPF", "Cliente");
         _repositoryMock.Setup(r => r.BuscarPorIdAsync(1))
             .ReturnsAsync(pessoa);
 
@@ -72,7 +72,7 @@ public class PessoaServiceTests
     [Fact]
     public async Task DesativarAsync_PessoaExistente_DeveDesativarECommit()
     {
-        var pessoa = new Pessoa { Nome = "João", Ativo = true };
+        var pessoa = new Pessoa("João", "CPF", "Cliente");
         _repositoryMock.Setup(r => r.BuscarPorIdAsync(1))
             .ReturnsAsync(pessoa);
 

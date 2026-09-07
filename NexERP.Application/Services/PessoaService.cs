@@ -1,6 +1,7 @@
-using NexERP.Domain.Entities;
-using NexERP.Domain.Interfaces;
 using NexERP.Application.Interfaces;
+using NexERP.Domain.Entities;
+using NexERP.Domain.Exceptions;
+using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
@@ -23,7 +24,14 @@ public class PessoaService : IPessoaService
 
     public async Task<Pessoa> CriarAsync(PessoaDto dto)
     {
-        var pessoa = MapearDto(new Pessoa(), dto);
+        var pessoa = new Pessoa(
+            dto.Nome ?? throw new DomainException("Nome é obrigatório."),
+            dto.TipoDocumento,
+            dto.Tipo);
+
+        MapearDto(pessoa, dto);
+        pessoa.Validar();
+
         await _pessoaRepository.AdicionarAsync(pessoa);
         await _unitOfWork.CommitAsync();
         return pessoa;
@@ -34,6 +42,7 @@ public class PessoaService : IPessoaService
         var pessoa = await _pessoaRepository.BuscarPorIdAsync(id);
         if (pessoa == null) return false;
         MapearDto(pessoa, dto);
+        pessoa.Validar();
         await _pessoaRepository.AtualizarAsync(pessoa);
         await _unitOfWork.CommitAsync();
         return true;
@@ -43,7 +52,7 @@ public class PessoaService : IPessoaService
     {
         var pessoa = await _pessoaRepository.BuscarPorIdAsync(id);
         if (pessoa == null) return false;
-        pessoa.Ativo = false;
+        pessoa.Desativar();
         await _pessoaRepository.AtualizarAsync(pessoa);
         await _unitOfWork.CommitAsync();
         return true;
