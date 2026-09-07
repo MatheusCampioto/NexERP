@@ -2,12 +2,9 @@ using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface IPessoaRepository
+public interface IPessoaRepository : IRepository<Pessoa>
 {
-    Task<IEnumerable<Pessoa>> ListarTodosAsync();
-    Task<Pessoa?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(Pessoa pessoa);
-    Task AtualizarAsync(Pessoa pessoa);
-    Task<bool> ExisteAsync(int id);
-    Task SalvarAsync();
+    Task<IEnumerable<Pessoa>> ListarPorTipoAsync(string tipo);
+    Task<Pessoa?> BuscarPorCpfAsync(string cpf);
+    Task<Pessoa?> BuscarPorCnpjAsync(string cnpj);
 }

@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class PessoaService
 {
     private readonly IPessoaRepository _pessoaRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PessoaService(IPessoaRepository pessoaRepository)
+    public PessoaService(IPessoaRepository pessoaRepository, IUnitOfWork unitOfWork)
     {
         _pessoaRepository = pessoaRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<Pessoa>> ListarTodosAsync()
@@ -22,7 +24,7 @@ public class PessoaService
     {
         var pessoa = MapearDto(new Pessoa(), dto);
         await _pessoaRepository.AdicionarAsync(pessoa);
-        await _pessoaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return pessoa;
     }
 
@@ -32,7 +34,7 @@ public class PessoaService
         if (pessoa == null) return false;
         MapearDto(pessoa, dto);
         await _pessoaRepository.AtualizarAsync(pessoa);
-        await _pessoaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -42,7 +44,7 @@ public class PessoaService
         if (pessoa == null) return false;
         pessoa.Ativo = false;
         await _pessoaRepository.AtualizarAsync(pessoa);
-        await _pessoaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -51,7 +53,6 @@ public class PessoaService
         pessoa.TipoDocumento = dto.TipoDocumento;
         pessoa.Tipo = dto.Tipo;
         pessoa.Funcao = dto.Funcao;
-
         pessoa.Nome = dto.Nome ?? string.Empty;
         pessoa.CPF = dto.CPF;
         pessoa.RG = dto.RG;
@@ -60,7 +61,6 @@ public class PessoaService
             : null;
         pessoa.EstadoCivil = dto.EstadoCivil;
         pessoa.Profissao = dto.Profissao;
-
         pessoa.RazaoSocial = dto.RazaoSocial;
         pessoa.NomeFantasia = dto.NomeFantasia;
         pessoa.CNPJ = dto.CNPJ;
@@ -68,11 +68,9 @@ public class PessoaService
         pessoa.InscricaoMunicipal = dto.InscricaoMunicipal;
         pessoa.NomeContato = dto.NomeContato;
         pessoa.Site = dto.Site;
-
         pessoa.Email = dto.Email;
         pessoa.Telefone = dto.Telefone;
         pessoa.Celular = dto.Celular;
-
         pessoa.CEP = dto.CEP;
         pessoa.Endereco = dto.Endereco;
         pessoa.Numero = dto.Numero;
@@ -80,7 +78,6 @@ public class PessoaService
         pessoa.Bairro = dto.Bairro;
         pessoa.Cidade = dto.Cidade;
         pessoa.Estado = dto.Estado;
-
         pessoa.Observacao = dto.Observacao;
         return pessoa;
     }

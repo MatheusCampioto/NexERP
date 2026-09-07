@@ -5,33 +5,20 @@ using NexERP.Infrastructure.Data;
 
 namespace NexERP.Infrastructure.Repositories;
 
-public class PessoaRepository : IPessoaRepository
+public class PessoaRepository : BaseRepository<Pessoa>, IPessoaRepository
 {
-    private readonly AppDbContext _context;
+    public PessoaRepository(AppDbContext context) : base(context) { }
 
-    public PessoaRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    // Override — filtra apenas ativos
+    public override async Task<IEnumerable<Pessoa>> ListarTodosAsync()
+        => await _dbSet.Where(p => p.Ativo).ToListAsync();
 
-    public async Task<IEnumerable<Pessoa>> ListarTodosAsync()
-        => await _context.Pessoas.Where(p => p.Ativo).ToListAsync();
+    public async Task<IEnumerable<Pessoa>> ListarPorTipoAsync(string tipo)
+        => await _dbSet.Where(p => p.Ativo && p.Tipo == tipo).ToListAsync();
 
-    public async Task<Pessoa?> BuscarPorIdAsync(int id)
-        => await _context.Pessoas.FindAsync(id);
+    public async Task<Pessoa?> BuscarPorCpfAsync(string cpf)
+        => await _dbSet.FirstOrDefaultAsync(p => p.CPF == cpf);
 
-    public async Task AdicionarAsync(Pessoa pessoa)
-        => await _context.Pessoas.AddAsync(pessoa);
-
-    public Task AtualizarAsync(Pessoa pessoa)
-{
-    _context.Pessoas.Update(pessoa);
-    return Task.CompletedTask;
-}
-
-    public async Task<bool> ExisteAsync(int id)
-        => await _context.Pessoas.AnyAsync(p => p.Id == id);
-
-    public async Task SalvarAsync()
-        => await _context.SaveChangesAsync();
+    public async Task<Pessoa?> BuscarPorCnpjAsync(string cnpj)
+        => await _dbSet.FirstOrDefaultAsync(p => p.CNPJ == cnpj);
 }

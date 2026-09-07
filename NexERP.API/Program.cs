@@ -6,6 +6,7 @@ using NexERP.Infrastructure.Data;
 using NexERP.Application.Services;
 using NexERP.Domain.Interfaces;
 using NexERP.Infrastructure.Repositories;
+using NexERP.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 // Repositórios
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
@@ -79,7 +83,12 @@ builder.Services.AddScoped<ILancamentoFinanceiroRepository, LancamentoFinanceiro
 builder.Services.AddScoped<IContaBancariaRepository, ContaBancariaRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IOrdemServicoRepository, OrdemServicoRepository>();
-
+builder.Services.AddScoped<ICondicaoPagamentoRepository, CondicaoPagamentoRepository>();
+builder.Services.AddScoped<ISolicitacaoCompraRepository, SolicitacaoCompraRepository>();
+builder.Services.AddScoped<IOrdemCompraRepository, OrdemCompraRepository>();
+builder.Services.AddScoped<INotaFiscalEntradaRepository, NotaFiscalEntradaRepository>();
+builder.Services.AddScoped<IConfiguracaoSistemaRepository, ConfiguracaoSistemaRepository>();
+builder.Services.AddScoped<IFilialRepository, FilialRepository>();
 
 // Services
 builder.Services.AddScoped<AuthService>();
@@ -92,17 +101,11 @@ builder.Services.AddScoped<ContaBancariaService>();
 builder.Services.AddScoped<UsuarioService>();
 builder.Services.AddScoped<CategoriaService>();
 builder.Services.AddScoped<OrdemServicoService>();
-builder.Services.AddScoped<ICondicaoPagamentoRepository, CondicaoPagamentoRepository>();
-builder.Services.AddScoped<ISolicitacaoCompraRepository, SolicitacaoCompraRepository>();
-builder.Services.AddScoped<IOrdemCompraRepository, OrdemCompraRepository>();
-builder.Services.AddScoped<INotaFiscalEntradaRepository, NotaFiscalEntradaRepository>();
 builder.Services.AddScoped<CondicaoPagamentoService>();
 builder.Services.AddScoped<SolicitacaoCompraService>();
 builder.Services.AddScoped<OrdemCompraService>();
 builder.Services.AddScoped<NotaFiscalEntradaService>();
-builder.Services.AddScoped<IConfiguracaoSistemaRepository, ConfiguracaoSistemaRepository>();
 builder.Services.AddScoped<ConfiguracaoSistemaService>();
-
 
 // CORS para o React
 builder.Services.AddCors(options =>
