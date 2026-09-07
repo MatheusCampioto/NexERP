@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class ContaBancariaService
 {
     private readonly IContaBancariaRepository _contaRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ContaBancariaService(IContaBancariaRepository contaRepository)
+    public ContaBancariaService(IContaBancariaRepository contaRepository, IUnitOfWork unitOfWork)
     {
         _contaRepository = contaRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<ContaBancaria>> ListarTodosAsync()
@@ -30,9 +32,8 @@ public class ContaBancariaService
             SaldoInicial = saldoInicial,
             SaldoAtual = saldoInicial
         };
-
         await _contaRepository.AdicionarAsync(conta);
-        await _contaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return conta;
     }
 
@@ -41,14 +42,12 @@ public class ContaBancariaService
     {
         var conta = await _contaRepository.BuscarPorIdAsync(id);
         if (conta == null) return false;
-
         conta.Nome = nome;
         conta.Banco = banco;
         conta.Agencia = agencia;
         conta.NumeroConta = numeroConta;
-
         await _contaRepository.AtualizarAsync(conta);
-        await _contaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -56,10 +55,9 @@ public class ContaBancariaService
     {
         var conta = await _contaRepository.BuscarPorIdAsync(id);
         if (conta == null) return false;
-
         conta.Ativa = false;
         await _contaRepository.AtualizarAsync(conta);
-        await _contaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 }

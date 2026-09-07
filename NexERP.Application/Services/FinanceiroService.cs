@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -7,12 +7,14 @@ public class FinanceiroService
 {
     private readonly ILancamentoFinanceiroRepository _lancamentoRepository;
     private readonly IContaBancariaRepository _contaRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public FinanceiroService(ILancamentoFinanceiroRepository lancamentoRepository,
-        IContaBancariaRepository contaRepository)
+        IContaBancariaRepository contaRepository, IUnitOfWork unitOfWork)
     {
         _lancamentoRepository = lancamentoRepository;
         _contaRepository = contaRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<LancamentoFinanceiro>> ListarTodosAsync()
@@ -55,16 +57,16 @@ public class FinanceiroService
             lancamentos.Add(lancamento);
         }
 
-        await _lancamentoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return lancamentos;
     }
 
     public async Task<(bool sucesso, string mensagem)> BaixarAsync(int id)
     {
         var lancamento = await _lancamentoRepository.BuscarPorIdAsync(id);
-        if (lancamento == null) return (false, "Lançamento não encontrado.");
-        if (lancamento.Status == "Pago") return (false, "Lançamento já está pago.");
-        if (lancamento.Status == "Cancelado") return (false, "Lançamento cancelado não pode ser baixado.");
+        if (lancamento == null) return (false, "Lancamento nao encontrado.");
+        if (lancamento.Status == "Pago") return (false, "Lancamento ja esta pago.");
+        if (lancamento.Status == "Cancelado") return (false, "Lancamento cancelado nao pode ser baixado.");
 
         lancamento.Status = "Pago";
         lancamento.DataPagamento = DateTime.UtcNow;
@@ -84,23 +86,22 @@ public class FinanceiroService
         }
 
         await _lancamentoRepository.AtualizarAsync(lancamento);
-        await _lancamentoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
-        return (true, "Lançamento baixado com sucesso.");
+        return (true, "Lancamento baixado com sucesso.");
     }
 
     public async Task<(bool sucesso, string mensagem)> CancelarAsync(int id)
     {
         var lancamento = await _lancamentoRepository.BuscarPorIdAsync(id);
-        if (lancamento == null) return (false, "Lançamento não encontrado.");
-        if (lancamento.Status == "Pago") return (false, "Lançamento pago não pode ser cancelado.");
+        if (lancamento == null) return (false, "Lancamento nao encontrado.");
+        if (lancamento.Status == "Pago") return (false, "Lancamento pago nao pode ser cancelado.");
 
         lancamento.Status = "Cancelado";
-
         await _lancamentoRepository.AtualizarAsync(lancamento);
-        await _lancamentoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
-        return (true, "Lançamento cancelado.");
+        return (true, "Lancamento cancelado.");
     }
 
     public async Task<object> FluxoDeCaixaAsync(DateTime inicio, DateTime fim)

@@ -1,12 +1,7 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface IContaBancariaRepository
+public interface IContaBancariaRepository : IRepository<ContaBancaria>
 {
-    Task<IEnumerable<ContaBancaria>> ListarTodosAsync();
-    Task<ContaBancaria?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(ContaBancaria conta);
-    Task AtualizarAsync(ContaBancaria conta);
-    Task SalvarAsync();
 }

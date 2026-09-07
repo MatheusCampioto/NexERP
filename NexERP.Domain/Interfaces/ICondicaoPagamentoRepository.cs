@@ -1,12 +1,7 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface ICondicaoPagamentoRepository
+public interface ICondicaoPagamentoRepository : IRepository<CondicaoPagamento>
 {
-    Task<IEnumerable<CondicaoPagamento>> ListarTodosAsync();
-    Task<CondicaoPagamento?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(CondicaoPagamento condicao);
-    Task AtualizarAsync(CondicaoPagamento condicao);
-    Task SalvarAsync();
 }

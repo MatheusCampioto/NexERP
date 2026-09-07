@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class ProdutoService
 {
     private readonly IProdutoRepository _produtoRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ProdutoService(IProdutoRepository produtoRepository)
+    public ProdutoService(IProdutoRepository produtoRepository, IUnitOfWork unitOfWork)
     {
         _produtoRepository = produtoRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<Produto>> ListarTodosAsync()
@@ -22,7 +24,7 @@ public class ProdutoService
     {
         var produto = MapearDto(new Produto(), dto);
         await _produtoRepository.AdicionarAsync(produto);
-        await _produtoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return produto;
     }
 
@@ -32,7 +34,7 @@ public class ProdutoService
         if (produto == null) return false;
         MapearDto(produto, dto);
         await _produtoRepository.AtualizarAsync(produto);
-        await _produtoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -42,7 +44,7 @@ public class ProdutoService
         if (produto == null) return false;
         produto.Ativo = false;
         await _produtoRepository.AtualizarAsync(produto);
-        await _produtoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 

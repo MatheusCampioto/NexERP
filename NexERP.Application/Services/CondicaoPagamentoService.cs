@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class CondicaoPagamentoService
 {
     private readonly ICondicaoPagamentoRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CondicaoPagamentoService(ICondicaoPagamentoRepository repository)
+    public CondicaoPagamentoService(ICondicaoPagamentoRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<CondicaoPagamento>> ListarTodosAsync()
@@ -27,7 +29,7 @@ public class CondicaoPagamentoService
             PrimeiroPagamentoDias = primeiroPagamentoDias
         };
         await _repository.AdicionarAsync(condicao);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return condicao;
     }
 
@@ -42,7 +44,7 @@ public class CondicaoPagamentoService
         condicao.DiasEntreParcelas = diasEntreParcelas;
         condicao.PrimeiroPagamentoDias = primeiroPagamentoDias;
         await _repository.AtualizarAsync(condicao);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -52,7 +54,7 @@ public class CondicaoPagamentoService
         if (condicao == null) return false;
         condicao.Ativa = false;
         await _repository.AtualizarAsync(condicao);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 }

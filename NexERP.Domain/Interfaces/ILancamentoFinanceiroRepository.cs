@@ -1,13 +1,8 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface ILancamentoFinanceiroRepository
+public interface ILancamentoFinanceiroRepository : IRepository<LancamentoFinanceiro>
 {
-    Task<IEnumerable<LancamentoFinanceiro>> ListarTodosAsync();
     Task<IEnumerable<LancamentoFinanceiro>> ListarPorTipoAsync(string tipo);
-    Task<LancamentoFinanceiro?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(LancamentoFinanceiro lancamento);
-    Task AtualizarAsync(LancamentoFinanceiro lancamento);
-    Task SalvarAsync();
 }

@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class CategoriaService
 {
     private readonly ICategoriaRepository _categoriaRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CategoriaService(ICategoriaRepository categoriaRepository)
+    public CategoriaService(ICategoriaRepository categoriaRepository, IUnitOfWork unitOfWork)
     {
         _categoriaRepository = categoriaRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<Categoria>> ListarTodosAsync()
@@ -19,7 +21,7 @@ public class CategoriaService
     {
         var categoria = new Categoria { Nome = nome, Descricao = descricao };
         await _categoriaRepository.AdicionarAsync(categoria);
-        await _categoriaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return categoria;
     }
 
@@ -30,7 +32,7 @@ public class CategoriaService
         categoria.Nome = nome;
         categoria.Descricao = descricao;
         await _categoriaRepository.AtualizarAsync(categoria);
-        await _categoriaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 
@@ -40,7 +42,7 @@ public class CategoriaService
         if (categoria == null) return false;
         categoria.Ativa = false;
         await _categoriaRepository.AtualizarAsync(categoria);
-        await _categoriaRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return true;
     }
 }

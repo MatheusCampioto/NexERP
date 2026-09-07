@@ -1,12 +1,7 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface IPedidoRepository
+public interface IPedidoRepository : IRepository<Pedido>
 {
-    Task<IEnumerable<Pedido>> ListarTodosAsync();
-    Task<Pedido?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(Pedido pedido);
-    Task AtualizarAsync(Pedido pedido);
-    Task SalvarAsync();
 }

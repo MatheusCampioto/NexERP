@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NexERP.Domain.Interfaces;
 using NexERP.Infrastructure.Data;
 
@@ -18,7 +18,7 @@ public abstract class BaseRepository<T> : IRepository<T> where T : class
    public virtual async Task<IEnumerable<T>> ListarTodosAsync()
         => await _dbSet.ToListAsync();
 
-    public async Task<T?> BuscarPorIdAsync(int id)
+    public virtual async Task<T?> BuscarPorIdAsync(int id)
         => await _dbSet.FindAsync(id);
 
     public async Task AdicionarAsync(T entity)

@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -7,12 +7,14 @@ public class EstoqueService
 {
     private readonly IMovimentacaoEstoqueRepository _movimentacaoRepository;
     private readonly IProdutoRepository _produtoRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public EstoqueService(IMovimentacaoEstoqueRepository movimentacaoRepository,
-        IProdutoRepository produtoRepository)
+        IProdutoRepository produtoRepository, IUnitOfWork unitOfWork)
     {
         _movimentacaoRepository = movimentacaoRepository;
         _produtoRepository = produtoRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<MovimentacaoEstoque>> ListarMovimentacoesPorProdutoAsync(int produtoId)
@@ -24,11 +26,11 @@ public class EstoqueService
         return produtos.Where(p => p.EstoqueAtual <= p.EstoqueMinimo);
     }
 
-    public async Task<(bool sucesso, string mensagem)> MovimentarAsync(int produtoId, string tipo, int quantidade, string? observacao)
+    public async Task<(bool sucesso, string mensagem)> MovimentarAsync(
+        int produtoId, string tipo, int quantidade, string? observacao)
     {
         var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
-        if (produto == null)
-            return (false, "Produto não encontrado.");
+        if (produto == null) return (false, "Produto nao encontrado.");
 
         if (tipo == "Saida" && produto.EstoqueAtual < quantidade)
             return (false, $"Estoque insuficiente. Estoque atual: {produto.EstoqueAtual}");
@@ -48,20 +50,19 @@ public class EstoqueService
 
         await _movimentacaoRepository.AdicionarAsync(movimentacao);
         await _produtoRepository.AtualizarAsync(produto);
-        await _movimentacaoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
-        return (true, "Movimentação realizada com sucesso.");
+        return (true, "Movimentacao realizada com sucesso.");
     }
 
-    public async Task<(bool sucesso, string mensagem)> AjustarInventarioAsync(int produtoId, int quantidadeReal, string? observacao)
+    public async Task<(bool sucesso, string mensagem)> AjustarInventarioAsync(
+        int produtoId, int quantidadeReal, string? observacao)
     {
         var produto = await _produtoRepository.BuscarPorIdAsync(produtoId);
-        if (produto == null)
-            return (false, "Produto não encontrado.");
+        if (produto == null) return (false, "Produto nao encontrado.");
 
         var diferenca = quantidadeReal - produto.EstoqueAtual;
-        if (diferenca == 0)
-            return (true, "Estoque já está correto.");
+        if (diferenca == 0) return (true, "Estoque ja esta correto.");
 
         var tipo = diferenca > 0 ? "Entrada" : "Saida";
         var quantidade = Math.Abs(diferenca);
@@ -71,15 +72,15 @@ public class EstoqueService
             ProdutoId = produtoId,
             Tipo = tipo,
             Quantidade = quantidade,
-            Observacao = observacao ?? $"Ajuste de inventário — de {produto.EstoqueAtual} para {quantidadeReal}"
+            Observacao = observacao ?? $"Ajuste de inventario: de {produto.EstoqueAtual} para {quantidadeReal}"
         };
 
         produto.EstoqueAtual = quantidadeReal;
 
         await _movimentacaoRepository.AdicionarAsync(movimentacao);
         await _produtoRepository.AtualizarAsync(produto);
-        await _movimentacaoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
-        return (true, $"Inventário ajustado. Diferença: {(diferenca > 0 ? "+" : "")}{diferenca}");
+        return (true, $"Inventario ajustado. Diferenca: {(diferenca > 0 ? "+" : "")}{diferenca}");
     }
 }

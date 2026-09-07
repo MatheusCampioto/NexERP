@@ -1,10 +1,8 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface IMovimentacaoEstoqueRepository
+public interface IMovimentacaoEstoqueRepository : IRepository<MovimentacaoEstoque>
 {
     Task<IEnumerable<MovimentacaoEstoque>> ListarPorProdutoAsync(int produtoId);
-    Task AdicionarAsync(MovimentacaoEstoque movimentacao);
-    Task SalvarAsync();
 }
