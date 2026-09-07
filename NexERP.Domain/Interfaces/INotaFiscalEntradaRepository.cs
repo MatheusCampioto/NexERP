@@ -1,12 +1,7 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface INotaFiscalEntradaRepository
+public interface INotaFiscalEntradaRepository : IRepository<NotaFiscalEntrada>
 {
-    Task<IEnumerable<NotaFiscalEntrada>> ListarTodosAsync();
-    Task<NotaFiscalEntrada?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(NotaFiscalEntrada nf);
-    Task AtualizarAsync(NotaFiscalEntrada nf);
-    Task SalvarAsync();
 }

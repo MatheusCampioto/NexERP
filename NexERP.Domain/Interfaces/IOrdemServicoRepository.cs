@@ -1,12 +1,7 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 
 namespace NexERP.Domain.Interfaces;
 
-public interface IOrdemServicoRepository
+public interface IOrdemServicoRepository : IRepository<OrdemServico>
 {
-    Task<IEnumerable<OrdemServico>> ListarTodosAsync();
-    Task<OrdemServico?> BuscarPorIdAsync(int id);
-    Task AdicionarAsync(OrdemServico ordemServico);
-    Task AtualizarAsync(OrdemServico ordemServico);
-    Task SalvarAsync();
 }

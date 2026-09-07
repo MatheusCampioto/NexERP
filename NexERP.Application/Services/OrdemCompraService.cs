@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class OrdemCompraService
 {
     private readonly IOrdemCompraRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public OrdemCompraService(IOrdemCompraRepository repository)
+    public OrdemCompraService(IOrdemCompraRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<OrdemCompra>> ListarTodosAsync()
@@ -48,28 +50,28 @@ public class OrdemCompraService
         ordem.ValorTotal = ordem.Itens.Sum(i => i.Quantidade * i.ValorUnitario);
 
         await _repository.AdicionarAsync(ordem);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return ordem;
     }
 
     public async Task<(bool sucesso, string mensagem)> AtualizarStatusAsync(int id, string novoStatus)
     {
         var ordem = await _repository.BuscarPorIdAsync(id);
-        if (ordem == null) return (false, "Ordem não encontrada.");
+        if (ordem == null) return (false, "Ordem nao encontrada.");
         ordem.Status = novoStatus;
         await _repository.AtualizarAsync(ordem);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return (true, $"Status atualizado para {novoStatus}.");
     }
 
     public async Task<(bool sucesso, string mensagem)> CancelarAsync(int id)
     {
         var ordem = await _repository.BuscarPorIdAsync(id);
-        if (ordem == null) return (false, "Ordem não encontrada.");
-        if (ordem.Status == "Recebida") return (false, "Ordem já recebida não pode ser cancelada.");
+        if (ordem == null) return (false, "Ordem nao encontrada.");
+        if (ordem.Status == "Recebida") return (false, "Ordem ja recebida nao pode ser cancelada.");
         ordem.Status = "Cancelada";
         await _repository.AtualizarAsync(ordem);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return (true, "Ordem cancelada.");
     }
 }

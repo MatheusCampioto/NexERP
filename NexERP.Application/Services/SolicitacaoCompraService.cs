@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class SolicitacaoCompraService
 {
     private readonly ISolicitacaoCompraRepository _repository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public SolicitacaoCompraService(ISolicitacaoCompraRepository repository)
+    public SolicitacaoCompraService(ISolicitacaoCompraRepository repository, IUnitOfWork unitOfWork)
     {
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<SolicitacaoCompra>> ListarTodosAsync()
@@ -41,41 +43,41 @@ public class SolicitacaoCompraService
         }
 
         await _repository.AdicionarAsync(solicitacao);
-        await _repository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return solicitacao;
     }
 
     public async Task<(bool sucesso, string mensagem)> AprovarAsync(int id)
     {
         var solicitacao = await _repository.BuscarPorIdAsync(id);
-        if (solicitacao == null) return (false, "Solicitação não encontrada.");
-        if (solicitacao.Status != "Pendente") return (false, "Apenas solicitações pendentes podem ser aprovadas.");
+        if (solicitacao == null) return (false, "Solicitacao nao encontrada.");
+        if (solicitacao.Status != "Pendente") return (false, "Apenas solicitacoes pendentes podem ser aprovadas.");
         solicitacao.Status = "Aprovada";
         await _repository.AtualizarAsync(solicitacao);
-        await _repository.SalvarAsync();
-        return (true, "Solicitação aprovada.");
+        await _unitOfWork.CommitAsync();
+        return (true, "Solicitacao aprovada.");
     }
 
     public async Task<(bool sucesso, string mensagem)> ReprovarAsync(int id, string motivo)
     {
         var solicitacao = await _repository.BuscarPorIdAsync(id);
-        if (solicitacao == null) return (false, "Solicitação não encontrada.");
-        if (solicitacao.Status != "Pendente") return (false, "Apenas solicitações pendentes podem ser reprovadas.");
+        if (solicitacao == null) return (false, "Solicitacao nao encontrada.");
+        if (solicitacao.Status != "Pendente") return (false, "Apenas solicitacoes pendentes podem ser reprovadas.");
         solicitacao.Status = "Reprovada";
         solicitacao.MotivoReprovacao = motivo;
         await _repository.AtualizarAsync(solicitacao);
-        await _repository.SalvarAsync();
-        return (true, "Solicitação reprovada.");
+        await _unitOfWork.CommitAsync();
+        return (true, "Solicitacao reprovada.");
     }
 
     public async Task<(bool sucesso, string mensagem)> CancelarAsync(int id)
     {
         var solicitacao = await _repository.BuscarPorIdAsync(id);
-        if (solicitacao == null) return (false, "Solicitação não encontrada.");
-        if (solicitacao.Status == "Aprovada") return (false, "Solicitação aprovada não pode ser cancelada.");
+        if (solicitacao == null) return (false, "Solicitacao nao encontrada.");
+        if (solicitacao.Status == "Aprovada") return (false, "Solicitacao aprovada nao pode ser cancelada.");
         solicitacao.Status = "Cancelada";
         await _repository.AtualizarAsync(solicitacao);
-        await _repository.SalvarAsync();
-        return (true, "Solicitação cancelada.");
+        await _unitOfWork.CommitAsync();
+        return (true, "Solicitacao cancelada.");
     }
 }

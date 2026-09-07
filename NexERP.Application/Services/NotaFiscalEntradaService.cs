@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -9,17 +9,20 @@ public class NotaFiscalEntradaService
     private readonly IOrdemCompraRepository _ordemRepository;
     private readonly IProdutoRepository _produtoRepository;
     private readonly IMovimentacaoEstoqueRepository _estoqueRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
     public NotaFiscalEntradaService(
         INotaFiscalEntradaRepository nfRepository,
         IOrdemCompraRepository ordemRepository,
         IProdutoRepository produtoRepository,
-        IMovimentacaoEstoqueRepository estoqueRepository)
+        IMovimentacaoEstoqueRepository estoqueRepository,
+        IUnitOfWork unitOfWork)
     {
         _nfRepository = nfRepository;
         _ordemRepository = ordemRepository;
         _produtoRepository = produtoRepository;
         _estoqueRepository = estoqueRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<NotaFiscalEntrada>> ListarTodosAsync()
@@ -60,15 +63,15 @@ public class NotaFiscalEntradaService
         }
 
         await _nfRepository.AdicionarAsync(nf);
-        await _nfRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return nf;
     }
 
     public async Task<(bool sucesso, string mensagem)> DarEntradaEstoqueAsync(int nfId)
     {
         var nf = await _nfRepository.BuscarPorIdAsync(nfId);
-        if (nf == null) return (false, "NF não encontrada.");
-        if (nf.EstoqueAtualizado) return (false, "Estoque já foi atualizado para esta NF.");
+        if (nf == null) return (false, "NF nao encontrada.");
+        if (nf.EstoqueAtualizado) return (false, "Estoque ja foi atualizado para esta NF.");
 
         foreach (var item in nf.Itens.Where(i => i.ProdutoId.HasValue))
         {
@@ -78,14 +81,13 @@ public class NotaFiscalEntradaService
             produto.EstoqueAtual += (int)item.Quantidade;
             await _produtoRepository.AtualizarAsync(produto);
 
-            var movimentacao = new MovimentacaoEstoque
+            await _estoqueRepository.AdicionarAsync(new MovimentacaoEstoque
             {
                 ProdutoId = item.ProdutoId!.Value,
                 Tipo = "Entrada",
                 Quantidade = (int)item.Quantidade,
                 Observacao = $"NF de Entrada #{nf.NumeroNF}"
-            };
-            await _estoqueRepository.AdicionarAsync(movimentacao);
+            });
         }
 
         nf.EstoqueAtualizado = true;
@@ -97,7 +99,7 @@ public class NotaFiscalEntradaService
         }
 
         await _nfRepository.AtualizarAsync(nf);
-        await _nfRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return (true, "Estoque atualizado com sucesso.");
     }
 }

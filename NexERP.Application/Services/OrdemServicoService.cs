@@ -1,4 +1,4 @@
-using NexERP.Domain.Entities;
+﻿using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -6,10 +6,12 @@ namespace NexERP.Application.Services;
 public class OrdemServicoService
 {
     private readonly IOrdemServicoRepository _ordemServicoRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public OrdemServicoService(IOrdemServicoRepository ordemServicoRepository)
+    public OrdemServicoService(IOrdemServicoRepository ordemServicoRepository, IUnitOfWork unitOfWork)
     {
         _ordemServicoRepository = ordemServicoRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<OrdemServico>> ListarTodosAsync()
@@ -48,29 +50,29 @@ public class OrdemServicoService
         }
 
         await _ordemServicoRepository.AdicionarAsync(os);
-        await _ordemServicoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return os;
     }
 
     public async Task<(bool sucesso, string mensagem)> AtualizarStatusAsync(int id, string novoStatus)
     {
         var os = await _ordemServicoRepository.BuscarPorIdAsync(id);
-        if (os == null) return (false, "Ordem de serviço não encontrada.");
+        if (os == null) return (false, "Ordem de servico nao encontrada.");
 
         os.Status = novoStatus;
         if (novoStatus == "Concluida")
             os.DataConclusao = DateTime.UtcNow;
 
         await _ordemServicoRepository.AtualizarAsync(os);
-        await _ordemServicoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
         return (true, $"Status atualizado para {novoStatus}.");
     }
 
     public async Task<(bool sucesso, string mensagem)> FinalizarAsync(int id, decimal valorFinal, string? observacao)
     {
         var os = await _ordemServicoRepository.BuscarPorIdAsync(id);
-        if (os == null) return (false, "Ordem de serviço não encontrada.");
-        if (os.Status == "Cancelada") return (false, "Ordem cancelada não pode ser finalizada.");
+        if (os == null) return (false, "Ordem de servico nao encontrada.");
+        if (os.Status == "Cancelada") return (false, "Ordem cancelada nao pode ser finalizada.");
 
         os.Status = "Concluida";
         os.ValorFinal = valorFinal;
@@ -78,19 +80,19 @@ public class OrdemServicoService
         if (observacao != null) os.Observacao = observacao;
 
         await _ordemServicoRepository.AtualizarAsync(os);
-        await _ordemServicoRepository.SalvarAsync();
-        return (true, "Ordem de serviço finalizada com sucesso.");
+        await _unitOfWork.CommitAsync();
+        return (true, "Ordem de servico finalizada com sucesso.");
     }
 
     public async Task<(bool sucesso, string mensagem)> CancelarAsync(int id)
     {
         var os = await _ordemServicoRepository.BuscarPorIdAsync(id);
-        if (os == null) return (false, "Ordem de serviço não encontrada.");
-        if (os.Status == "Concluida") return (false, "Ordem concluída não pode ser cancelada.");
+        if (os == null) return (false, "Ordem de servico nao encontrada.");
+        if (os.Status == "Concluida") return (false, "Ordem concluida nao pode ser cancelada.");
 
         os.Status = "Cancelada";
         await _ordemServicoRepository.AtualizarAsync(os);
-        await _ordemServicoRepository.SalvarAsync();
-        return (true, "Ordem de serviço cancelada.");
+        await _unitOfWork.CommitAsync();
+        return (true, "Ordem de servico cancelada.");
     }
 }
