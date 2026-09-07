@@ -26,35 +26,58 @@ public class AppDbContext : DbContext
     public DbSet<NotaFiscalEntrada> NotasFiscaisEntrada { get; set; }
     public DbSet<ItemNotaFiscalEntrada> ItensNotaFiscalEntrada { get; set; }
     public DbSet<ConfiguracaoSistema> ConfiguracoesSistema { get; set; }
+    public DbSet<Filial> Filiais { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder )
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ConfiguracaoSistema>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NomeEmpresa).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.NomeFantasia).HasMaxLength(150);
+            entity.Property(e => e.CNPJ).HasMaxLength(18);
+            entity.Property(e => e.InscricaoEstadual).HasMaxLength(20);
+            entity.Property(e => e.InscricaoMunicipal).HasMaxLength(20);
+            entity.Property(e => e.RegimeTributario).HasMaxLength(20);
+            entity.Property(e => e.Email).HasMaxLength(150);
+            entity.Property(e => e.Telefone).HasMaxLength(20);
+            entity.Property(e => e.Site).HasMaxLength(200);
+            entity.Property(e => e.CEP).HasMaxLength(10);
+            entity.Property(e => e.Endereco).HasMaxLength(200);
+            entity.Property(e => e.Numero).HasMaxLength(10);
+            entity.Property(e => e.Complemento).HasMaxLength(100);
+            entity.Property(e => e.Bairro).HasMaxLength(100);
+            entity.Property(e => e.Cidade).HasMaxLength(100);
+            entity.Property(e => e.Estado).HasMaxLength(2);
+            entity.Property(e => e.CFOP_PadraoVenda).HasMaxLength(10);
+            entity.Property(e => e.CFOP_PadraoCompra).HasMaxLength(10);
+            entity.Property(e => e.AliquotaICMS_Padrao).HasPrecision(18, 4);
+            entity.Property(e => e.AliquotaPIS_Padrao).HasPrecision(18, 4);
+            entity.Property(e => e.AliquotaCOFINS_Padrao).HasPrecision(18, 4);
+            entity.Property(e => e.MoedaSimbolo).HasMaxLength(5);
+        });
 
-      modelBuilder.Entity<ConfiguracaoSistema>(entity =>
+      modelBuilder.Entity<Filial>(entity =>
 {
     entity.HasKey(e => e.Id);
-    entity.Property(e => e.NomeEmpresa).IsRequired().HasMaxLength(150);
+    entity.Property(e => e.Descricao).IsRequired().HasMaxLength(150);
     entity.Property(e => e.NomeFantasia).HasMaxLength(150);
     entity.Property(e => e.CNPJ).HasMaxLength(18);
     entity.Property(e => e.InscricaoEstadual).HasMaxLength(20);
     entity.Property(e => e.InscricaoMunicipal).HasMaxLength(20);
-    entity.Property(e => e.RegimeTributario).HasMaxLength(20);
     entity.Property(e => e.Email).HasMaxLength(150);
     entity.Property(e => e.Telefone).HasMaxLength(20);
-    entity.Property(e => e.Site).HasMaxLength(200);
     entity.Property(e => e.CEP).HasMaxLength(10);
     entity.Property(e => e.Endereco).HasMaxLength(200);
-    entity.Property(e => e.Numero).HasMaxLength(10);
+    entity.Property(e => e.NumeroEnd).HasMaxLength(10);
     entity.Property(e => e.Complemento).HasMaxLength(100);
     entity.Property(e => e.Bairro).HasMaxLength(100);
     entity.Property(e => e.Cidade).HasMaxLength(100);
     entity.Property(e => e.Estado).HasMaxLength(2);
-    entity.Property(e => e.CFOP_PadraoVenda).HasMaxLength(10);
-    entity.Property(e => e.CFOP_PadraoCompra).HasMaxLength(10);
-    entity.Property(e => e.AliquotaICMS_Padrao).HasPrecision(18, 4);
-    entity.Property(e => e.AliquotaPIS_Padrao).HasPrecision(18, 4);
-    entity.Property(e => e.AliquotaCOFINS_Padrao).HasPrecision(18, 4);
-    entity.Property(e => e.MoedaSimbolo).HasMaxLength(5);
+    entity.HasOne(e => e.Pessoa)
+          .WithMany()
+          .HasForeignKey(e => e.PessoaId)
+          .IsRequired(false);
 });
 
         modelBuilder.Entity<Usuario>(entity =>
@@ -111,49 +134,44 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Descricao).HasMaxLength(200);
         });
 
-modelBuilder.Entity<Produto>(entity =>
-{
-    entity.HasKey(e => e.Id);
-    entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
-    entity.Property(e => e.Codigo).HasMaxLength(50);
-    entity.Property(e => e.CodigoBarras).HasMaxLength(50);
-    entity.Property(e => e.Unidade).HasMaxLength(10);
-    entity.Property(e => e.PrecoVenda).HasPrecision(18, 2);
-    entity.Property(e => e.PrecoCusto).HasPrecision(18, 2);
-    entity.Property(e => e.PrecoMinimo).HasPrecision(18, 2);
-    entity.Ignore(e => e.MargemLucro);
-
-    entity.Property(e => e.NCM).HasMaxLength(10);
-    entity.Property(e => e.CEST).HasMaxLength(10);
-    entity.Property(e => e.CFOP).HasMaxLength(10);
-    entity.Property(e => e.OrigemMercadoria).HasMaxLength(2);
-    entity.Property(e => e.CSOSN).HasMaxLength(10);
-    entity.Property(e => e.CST_ICMS).HasMaxLength(10);
-    entity.Property(e => e.CST_PIS).HasMaxLength(10);
-    entity.Property(e => e.CST_COFINS).HasMaxLength(10);
-    entity.Property(e => e.AliquotaICMS).HasPrecision(18, 4);
-    entity.Property(e => e.AliquotaIPI).HasPrecision(18, 4);
-    entity.Property(e => e.AliquotaPIS).HasPrecision(18, 4);
-    entity.Property(e => e.AliquotaCOFINS).HasPrecision(18, 4);
-
-    entity.Property(e => e.PesoBruto).HasPrecision(18, 4);
-    entity.Property(e => e.PesoLiquido).HasPrecision(18, 4);
-    entity.Property(e => e.Altura).HasPrecision(18, 4);
-    entity.Property(e => e.Largura).HasPrecision(18, 4);
-    entity.Property(e => e.Comprimento).HasPrecision(18, 4);
-
-    entity.Property(e => e.LocalizacaoEstoque).HasMaxLength(50);
-
-    entity.HasOne(e => e.Categoria)
-          .WithMany()
-          .HasForeignKey(e => e.CategoriaId)
-          .IsRequired(false);
-
-    entity.HasOne(e => e.Fornecedor)
-          .WithMany()
-          .HasForeignKey(e => e.FornecedorId)
-          .IsRequired(false);
-});
+        modelBuilder.Entity<Produto>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
+            entity.Property(e => e.Codigo).HasMaxLength(50);
+            entity.Property(e => e.CodigoBarras).HasMaxLength(50);
+            entity.Property(e => e.Unidade).HasMaxLength(10);
+            entity.Property(e => e.PrecoVenda).HasPrecision(18, 2);
+            entity.Property(e => e.PrecoCusto).HasPrecision(18, 2);
+            entity.Property(e => e.PrecoMinimo).HasPrecision(18, 2);
+            entity.Ignore(e => e.MargemLucro);
+            entity.Property(e => e.NCM).HasMaxLength(10);
+            entity.Property(e => e.CEST).HasMaxLength(10);
+            entity.Property(e => e.CFOP).HasMaxLength(10);
+            entity.Property(e => e.OrigemMercadoria).HasMaxLength(2);
+            entity.Property(e => e.CSOSN).HasMaxLength(10);
+            entity.Property(e => e.CST_ICMS).HasMaxLength(10);
+            entity.Property(e => e.CST_PIS).HasMaxLength(10);
+            entity.Property(e => e.CST_COFINS).HasMaxLength(10);
+            entity.Property(e => e.AliquotaICMS).HasPrecision(18, 4);
+            entity.Property(e => e.AliquotaIPI).HasPrecision(18, 4);
+            entity.Property(e => e.AliquotaPIS).HasPrecision(18, 4);
+            entity.Property(e => e.AliquotaCOFINS).HasPrecision(18, 4);
+            entity.Property(e => e.PesoBruto).HasPrecision(18, 4);
+            entity.Property(e => e.PesoLiquido).HasPrecision(18, 4);
+            entity.Property(e => e.Altura).HasPrecision(18, 4);
+            entity.Property(e => e.Largura).HasPrecision(18, 4);
+            entity.Property(e => e.Comprimento).HasPrecision(18, 4);
+            entity.Property(e => e.LocalizacaoEstoque).HasMaxLength(50);
+            entity.HasOne(e => e.Categoria)
+                  .WithMany()
+                  .HasForeignKey(e => e.CategoriaId)
+                  .IsRequired(false);
+            entity.HasOne(e => e.Fornecedor)
+                  .WithMany()
+                  .HasForeignKey(e => e.FornecedorId)
+                  .IsRequired(false);
+        });
 
         modelBuilder.Entity<MovimentacaoEstoque>(entity =>
         {
