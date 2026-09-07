@@ -131,6 +131,32 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 
+// Global Error Handling
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        if (error != null)
+        {
+            var ex = error.Error;
+
+            // DomainException retorna 400, não 500
+            if (ex is NexERP.Domain.Exceptions.DomainException)
+                context.Response.StatusCode = 400;
+
+            await context.Response.WriteAsJsonAsync(new
+            {
+                status = context.Response.StatusCode,
+                mensagem = ex.Message
+            });
+        }
+    });
+});
+
 app.UseCors("FrontendPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
