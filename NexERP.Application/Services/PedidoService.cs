@@ -1,4 +1,5 @@
 using NexERP.Domain.Entities;
+using NexERP.Domain.Enums;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
@@ -25,18 +26,16 @@ public class PedidoService
         => await _pedidoRepository.BuscarPorIdAsync(id);
 
     public async Task<(bool sucesso, string mensagem, Pedido? pedido)> CriarAsync(
-        int pessoaId, string? observacao, string? condicaoPagamento,
-        string? formaPagamento, decimal desconto,
+        int pessoaId, string? observacao, int? condicaoPagamentoId,
+        FormaPagamento? formaPagamento, decimal desconto,
         List<(int produtoId, int quantidade, decimal desconto)> itens)
     {
-        var pedido = new Pedido
+        var pedido = new Pedido(pessoaId)
         {
-            PessoaId = pessoaId,
             Observacao = observacao,
-            CondicaoPagamento = condicaoPagamento,
+            CondicaoPagamentoId = condicaoPagamentoId,
             FormaPagamento = formaPagamento,
-            Desconto = desconto,
-            Status = "Orcamento"
+            Desconto = desconto
         };
 
         foreach (var (produtoId, quantidade, descontoItem) in itens)
@@ -54,7 +53,7 @@ public class PedidoService
             });
         }
 
-        pedido.ValorTotal = pedido.Itens.Sum(i => (i.Quantidade * i.PrecoUnitario) - i.Desconto);
+        pedido.RecalcularTotal();
 
         await _pedidoRepository.AdicionarAsync(pedido);
         await _pedidoRepository.SalvarAsync();
@@ -63,18 +62,19 @@ public class PedidoService
     }
 
     public async Task<(bool sucesso, string mensagem)> AtualizarAsync(
-        int id, int pessoaId, string? observacao, string? condicaoPagamento,
-        string? formaPagamento, decimal desconto,
+        int id, int pessoaId, string? observacao, int? condicaoPagamentoId,
+        FormaPagamento? formaPagamento, decimal desconto,
         List<(int produtoId, int quantidade, decimal desconto)> itens)
     {
         var pedido = await _pedidoRepository.BuscarPorIdAsync(id);
         if (pedido == null) return (false, "Pedido não encontrado.");
-        if (pedido.Status == "Confirmado" || pedido.Status == "Cancelado")
+
+        if (pedido.Status == StatusPedido.Confirmado || pedido.Status == StatusPedido.Cancelado)
             return (false, "Pedido não pode ser editado neste status.");
 
         pedido.PessoaId = pessoaId;
         pedido.Observacao = observacao;
-        pedido.CondicaoPagamento = condicaoPagamento;
+        pedido.CondicaoPagamentoId = condicaoPagamentoId;
         pedido.FormaPagamento = formaPagamento;
         pedido.Desconto = desconto;
 
@@ -94,7 +94,7 @@ public class PedidoService
             });
         }
 
-        pedido.ValorTotal = pedido.Itens.Sum(i => (i.Quantidade * i.PrecoUnitario) - i.Desconto);
+        pedido.RecalcularTotal();
 
         await _pedidoRepository.AtualizarAsync(pedido);
         await _pedidoRepository.SalvarAsync();
@@ -107,15 +107,15 @@ public class PedidoService
         var pedido = await _pedidoRepository.BuscarPorIdAsync(id);
         if (pedido == null) return (false, "Pedido não encontrado.");
 
-        if (pedido.Status == "Orcamento")
+        if (pedido.Status == StatusPedido.Orcamento)
         {
-            pedido.Status = "Pedido";
+            pedido.Status = StatusPedido.Pedido;
             await _pedidoRepository.AtualizarAsync(pedido);
             await _pedidoRepository.SalvarAsync();
             return (true, "Orçamento convertido em Pedido.");
         }
 
-        if (pedido.Status == "Pedido")
+        if (pedido.Status == StatusPedido.Pedido)
         {
             foreach (var item in pedido.Itens)
             {
@@ -136,7 +136,7 @@ public class PedidoService
                 });
             }
 
-            pedido.Status = "Confirmado";
+            pedido.Confirmar();
             await _pedidoRepository.AtualizarAsync(pedido);
             await _pedidoRepository.SalvarAsync();
             return (true, "Pedido confirmado e estoque atualizado.");
@@ -149,9 +149,8 @@ public class PedidoService
     {
         var pedido = await _pedidoRepository.BuscarPorIdAsync(id);
         if (pedido == null) return (false, "Pedido não encontrado.");
-        if (pedido.Status == "Confirmado") return (false, "Pedido confirmado não pode ser cancelado.");
 
-        pedido.Status = "Cancelado";
+        pedido.Cancelar();
         await _pedidoRepository.AtualizarAsync(pedido);
         await _pedidoRepository.SalvarAsync();
 

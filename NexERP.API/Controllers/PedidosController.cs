@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NexERP.Application.Services;
+using NexERP.Domain.Enums;
 
 namespace NexERP.API.Controllers;
 
@@ -33,26 +34,37 @@ public class PedidosController : ControllerBase
     public async Task<IActionResult> Criar([FromBody] CriarPedidoRequest request)
     {
         var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
-        var (sucesso, mensagem, pedido) = await _pedidoService.CriarAsync(
-            request.PessoaId, request.Observacao, request.CondicaoPagamento,
-            request.FormaPagamento, request.Desconto, itens);
 
-        if (!sucesso)
-            return BadRequest(new { mensagem });
+        var resultado = await _pedidoService.CriarAsync(
+            request.PessoaId,
+            request.Observacao,
+            request.CondicaoPagamentoId,
+            request.FormaPagamento,
+            request.Desconto,
+            itens);
 
-        return StatusCode(201, pedido);
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
+
+        return StatusCode(201, resultado.pedido);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarPedidoRequest request)
     {
         var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
-        var (sucesso, mensagem) = await _pedidoService.AtualizarAsync(
-            id, request.PessoaId, request.Observacao, request.CondicaoPagamento,
-            request.FormaPagamento, request.Desconto, itens);
 
-        if (!sucesso)
-            return BadRequest(new { mensagem });
+        var resultado = await _pedidoService.AtualizarAsync(
+            id,
+            request.PessoaId,
+            request.Observacao,
+            request.CondicaoPagamentoId,
+            request.FormaPagamento,
+            request.Desconto,
+            itens);
+
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
 
         return NoContent();
     }
@@ -60,27 +72,27 @@ public class PedidosController : ControllerBase
     [HttpPatch("{id}/avancar")]
     public async Task<IActionResult> Avancar(int id)
     {
-        var (sucesso, mensagem) = await _pedidoService.AvancarStatusAsync(id);
-        if (!sucesso)
-            return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _pedidoService.AvancarStatusAsync(id);
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/cancelar")]
     public async Task<IActionResult> Cancelar(int id)
     {
-        var (sucesso, mensagem) = await _pedidoService.CancelarAsync(id);
-        if (!sucesso)
-            return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _pedidoService.CancelarAsync(id);
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
 public record CriarPedidoRequest(
     int PessoaId,
     string? Observacao,
-    string? CondicaoPagamento,
-    string? FormaPagamento,
+    int? CondicaoPagamentoId,
+    FormaPagamento? FormaPagamento,
     decimal Desconto,
     List<ItemPedidoRequest> Itens
 );
@@ -88,8 +100,8 @@ public record CriarPedidoRequest(
 public record AtualizarPedidoRequest(
     int PessoaId,
     string? Observacao,
-    string? CondicaoPagamento,
-    string? FormaPagamento,
+    int? CondicaoPagamentoId,
+    FormaPagamento? FormaPagamento,
     decimal Desconto,
     List<ItemPedidoRequest> Itens
 );
