@@ -184,20 +184,26 @@ public class AppDbContext : DbContext
                   .HasForeignKey(e => e.ProdutoId);
         });
 
-        modelBuilder.Entity<Pedido>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Status).HasMaxLength(20);
-            entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
-            entity.Property(e => e.Desconto).HasPrecision(18, 2);
-            entity.Property(e => e.CondicaoPagamento).HasMaxLength(50);
-            entity.Property(e => e.FormaPagamento).HasMaxLength(50);
-            entity.Ignore(e => e.ValorLiquido);
-            entity.HasOne(e => e.Pessoa)
-                  .WithMany()
-                  .HasForeignKey(e => e.PessoaId);
-        });
-
+modelBuilder.Entity<Pedido>(entity =>
+{
+    entity.HasKey(e => e.Id);
+    entity.Property(e => e.Status)
+          .HasConversion<string>()
+          .HasMaxLength(20);
+    entity.Property(e => e.FormaPagamento)
+          .HasConversion<string>()
+          .HasMaxLength(50);
+    entity.Property(e => e.ValorTotal).HasPrecision(18, 2);
+    entity.Property(e => e.Desconto).HasPrecision(18, 2);
+    entity.Ignore(e => e.ValorLiquido);
+    entity.HasOne(e => e.Pessoa)
+          .WithMany()
+          .HasForeignKey(e => e.PessoaId);
+    entity.HasOne(e => e.CondicaoPagamento)
+          .WithMany()
+          .HasForeignKey(e => e.CondicaoPagamentoId)
+          .IsRequired(false);
+});
         modelBuilder.Entity<ItemPedido>(entity =>
         {
             entity.HasKey(e => e.Id);
