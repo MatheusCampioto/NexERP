@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Domain", "NexERP.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Infrastructure", "NexERP.Infrastructure\NexERP.Infrastructure.csproj", "{EBAC542C-F661-4E5B-A818-4C545120B237}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NexERP.Tests", "NexERP.Tests\NexERP.Tests.csproj", "{A5205A33-BC44-4CD8-9EE2-241334EF8612}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{EBAC542C-F661-4E5B-A818-4C545120B237}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBAC542C-F661-4E5B-A818-4C545120B237}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBAC542C-F661-4E5B-A818-4C545120B237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5205A33-BC44-4CD8-9EE2-241334EF8612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5205A33-BC44-4CD8-9EE2-241334EF8612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5205A33-BC44-4CD8-9EE2-241334EF8612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5205A33-BC44-4CD8-9EE2-241334EF8612}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
