@@ -3,33 +3,40 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IConfiguration _configuration;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthService(IUsuarioRepository usuarioRepository, IConfiguration configuration)
+    public AuthService(
+        IUsuarioRepository usuarioRepository,
+        IConfiguration configuration,
+        IUnitOfWork unitOfWork)
     {
         _usuarioRepository = usuarioRepository;
         _configuration = configuration;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<string?> LoginAsync(string email, string senha)
+    public async Task<(bool sucesso, string mensagem, string? token)> LoginAsync(string email, string senha)
     {
         var usuario = await _usuarioRepository.BuscarPorEmailAsync(email);
 
         if (usuario == null || !usuario.Ativo)
-            return null;
+            return (false, "Credenciais inválidas.", null);
 
         if (!BCrypt.Net.BCrypt.Verify(senha, usuario.SenhaHash))
-            return null;
+            return (false, "Credenciais inválidas.", null);
 
-        return GerarToken(usuario);
+        var token = GerarToken(usuario);
+        return (true, "Login realizado com sucesso.", token);
     }
 
     public async Task RegistrarAsync(string nome, string email, string senha, string perfil = "Operador")
@@ -45,7 +52,7 @@ public class AuthService
         };
 
         await _usuarioRepository.AdicionarAsync(usuario);
-        await _usuarioRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
     }
 
     private string GerarToken(Usuario usuario)

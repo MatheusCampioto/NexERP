@@ -17,12 +17,12 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var token = await _authService.LoginAsync(request.Email, request.Senha);
+        var resultado = await _authService.LoginAsync(request.Email, request.Senha);
 
-        if (token == null)
-            return Unauthorized(new { mensagem = "Email ou senha inválidos." });
+        if (!resultado.sucesso)
+            return Unauthorized(new { mensagem = resultado.mensagem });
 
-        return Ok(new { token });
+        return Ok(new { token = resultado.token });
     }
 
     [HttpPost("registrar")]

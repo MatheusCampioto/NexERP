@@ -1,9 +1,10 @@
 using NexERP.Domain.Entities;
 using NexERP.Domain.Interfaces;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class PessoaService
+public class PessoaService : IPessoaService
 {
     private readonly IPessoaRepository _pessoaRepository;
     private readonly IUnitOfWork _unitOfWork;

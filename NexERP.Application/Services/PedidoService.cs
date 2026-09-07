@@ -1,22 +1,27 @@
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Entities;
 using NexERP.Domain.Enums;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class PedidoService
+public class PedidoService : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IProdutoRepository _produtoRepository;
     private readonly IMovimentacaoEstoqueRepository _movimentacaoRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public PedidoService(IPedidoRepository pedidoRepository,
+    public PedidoService(
+        IPedidoRepository pedidoRepository,
         IProdutoRepository produtoRepository,
-        IMovimentacaoEstoqueRepository movimentacaoRepository)
+        IMovimentacaoEstoqueRepository movimentacaoRepository,
+        IUnitOfWork unitOfWork)
     {
         _pedidoRepository = pedidoRepository;
         _produtoRepository = produtoRepository;
         _movimentacaoRepository = movimentacaoRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<Pedido>> ListarTodosAsync()
@@ -56,7 +61,7 @@ public class PedidoService
         pedido.RecalcularTotal();
 
         await _pedidoRepository.AdicionarAsync(pedido);
-        await _pedidoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
         return (true, "Pedido criado com sucesso.", pedido);
     }
@@ -77,7 +82,6 @@ public class PedidoService
         pedido.CondicaoPagamentoId = condicaoPagamentoId;
         pedido.FormaPagamento = formaPagamento;
         pedido.Desconto = desconto;
-
         pedido.Itens.Clear();
 
         foreach (var (produtoId, quantidade, descontoItem) in itens)
@@ -97,7 +101,7 @@ public class PedidoService
         pedido.RecalcularTotal();
 
         await _pedidoRepository.AtualizarAsync(pedido);
-        await _pedidoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
         return (true, "Pedido atualizado com sucesso.");
     }
@@ -111,7 +115,7 @@ public class PedidoService
         {
             pedido.Status = StatusPedido.Pedido;
             await _pedidoRepository.AtualizarAsync(pedido);
-            await _pedidoRepository.SalvarAsync();
+            await _unitOfWork.CommitAsync();
             return (true, "Orçamento convertido em Pedido.");
         }
 
@@ -138,7 +142,7 @@ public class PedidoService
 
             pedido.Confirmar();
             await _pedidoRepository.AtualizarAsync(pedido);
-            await _pedidoRepository.SalvarAsync();
+            await _unitOfWork.CommitAsync();
             return (true, "Pedido confirmado e estoque atualizado.");
         }
 
@@ -152,7 +156,7 @@ public class PedidoService
 
         pedido.Cancelar();
         await _pedidoRepository.AtualizarAsync(pedido);
-        await _pedidoRepository.SalvarAsync();
+        await _unitOfWork.CommitAsync();
 
         return (true, "Pedido cancelado.");
     }
