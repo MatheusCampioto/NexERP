@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
-using NexERP.Domain.Interfaces;
+using NexERP.Application.Interfaces;
 using System.Security.Claims;
 
 namespace NexERP.API.Controllers;
@@ -11,13 +10,11 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class UsuariosController : ControllerBase
 {
-    private readonly UsuarioService _usuarioService;
-    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IUsuarioService _usuarioService;
 
-    public UsuariosController(UsuarioService usuarioService, IUsuarioRepository usuarioRepository)
+    public UsuariosController(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
-        _usuarioRepository = usuarioRepository;
     }
 
     [HttpGet]
@@ -38,7 +35,7 @@ public class UsuariosController : ControllerBase
     {
         var usuario = await _usuarioService.BuscarPorIdAsync(id);
         if (usuario == null)
-            return NotFound(new { mensagem = "Usuário não encontrado." });
+            return NotFound(new { mensagem = "Usuario nao encontrado." });
         return Ok(new
         {
             usuario.Id, usuario.Nome, usuario.Email, usuario.Perfil, usuario.Ativo,
@@ -52,22 +49,21 @@ public class UsuariosController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarUsuarioRequest request)
     {
-        var (sucesso, mensagem) = await _usuarioService.AtualizarAsync(
+        var resultado = await _usuarioService.AtualizarAsync(
             id, request.Nome, request.Perfil, request.Ativo,
             request.AcessoPessoas, request.AcessoProdutos, request.AcessoEstoque,
             request.AcessoPedidos, request.AcessoFinanceiro, request.AcessoRelatorios,
             request.AcessoUsuarios);
-
-        if (!sucesso) return NotFound(new { mensagem });
-        return Ok(new { mensagem });
+        if (!resultado.sucesso) return NotFound(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/senha")]
     public async Task<IActionResult> AlterarSenha(int id, [FromBody] AlterarSenhaRequest request)
     {
-        var (sucesso, mensagem) = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPut("alterar-senha")]
@@ -76,31 +72,24 @@ public class UsuariosController : ControllerBase
         var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (idClaim == null) return Unauthorized();
         var id = int.Parse(idClaim);
-        var (sucesso, mensagem) = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _usuarioService.AlterarSenhaAsync(id, request.SenhaAtual, request.NovaSenha);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Desativar(int id)
     {
-        var (sucesso, mensagem) = await _usuarioService.DesativarAsync(id);
-        if (!sucesso) return NotFound(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _usuarioService.DesativarAsync(id);
+        if (!resultado.sucesso) return NotFound(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
 public record AtualizarUsuarioRequest(
-    string Nome,
-    string Perfil,
-    bool Ativo,
-    bool AcessoPessoas,
-    bool AcessoProdutos,
-    bool AcessoEstoque,
-    bool AcessoPedidos,
-    bool AcessoFinanceiro,
-    bool AcessoRelatorios,
-    bool AcessoUsuarios
-);
+    string Nome, string Perfil, bool Ativo,
+    bool AcessoPessoas, bool AcessoProdutos, bool AcessoEstoque,
+    bool AcessoPedidos, bool AcessoFinanceiro, bool AcessoRelatorios,
+    bool AcessoUsuarios);
 
 public record AlterarSenhaRequest(string SenhaAtual, string NovaSenha);

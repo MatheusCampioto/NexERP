@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -7,9 +7,9 @@ namespace NexERP.API.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthService authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
@@ -18,10 +18,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var resultado = await _authService.LoginAsync(request.Email, request.Senha);
-
         if (!resultado.sucesso)
             return Unauthorized(new { mensagem = resultado.mensagem });
-
         return Ok(new { token = resultado.token });
     }
 
@@ -29,7 +27,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Registrar([FromBody] RegistrarRequest request)
     {
         await _authService.RegistrarAsync(request.Nome, request.Email, request.Senha, request.Perfil);
-        return StatusCode(201, new { mensagem = "Usuário criado com sucesso." });
+        return StatusCode(201, new { mensagem = "Usuario criado com sucesso." });
     }
 }
 
