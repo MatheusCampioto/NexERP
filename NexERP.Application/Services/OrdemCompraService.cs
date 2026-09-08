@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class OrdemCompraService
+public class OrdemCompraService : IOrdemCompraService
 {
     private readonly IOrdemCompraRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -75,3 +76,4 @@ public class OrdemCompraService
         return (true, "Ordem cancelada.");
     }
 }
+

@@ -101,11 +101,11 @@ builder.Services.AddScoped<IEstoqueService, EstoqueService>();
 builder.Services.AddScoped<IFinanceiroService, FinanceiroService>();
 builder.Services.AddScoped<IContaBancariaService, ContaBancariaService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
-builder.Services.AddScoped<OrdemServicoService>();
-builder.Services.AddScoped<CondicaoPagamentoService>();
-builder.Services.AddScoped<SolicitacaoCompraService>();
-builder.Services.AddScoped<OrdemCompraService>();
-builder.Services.AddScoped<NotaFiscalEntradaService>();
+builder.Services.AddScoped<IOrdemServicoService, OrdemServicoService>();
+builder.Services.AddScoped<ICondicaoPagamentoService, CondicaoPagamentoService>();
+builder.Services.AddScoped<ISolicitacaoCompraService, SolicitacaoCompraService>();
+builder.Services.AddScoped<IOrdemCompraService, OrdemCompraService>();
+builder.Services.AddScoped<INotaFiscalEntradaService, NotaFiscalEntradaService>();
 builder.Services.AddScoped<ConfiguracaoSistemaService>();
 
 // CORS para o React

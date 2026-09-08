@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class OrdemServicoService
+public class OrdemServicoService : IOrdemServicoService
 {
     private readonly IOrdemServicoRepository _ordemServicoRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -96,3 +97,4 @@ public class OrdemServicoService
         return (true, "Ordem de servico cancelada.");
     }
 }
+

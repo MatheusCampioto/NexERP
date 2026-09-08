@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 using System.Security.Claims;
 
 namespace NexERP.API.Controllers;
@@ -10,9 +10,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class SolicitacoesCompraController : ControllerBase
 {
-    private readonly SolicitacaoCompraService _service;
+    private readonly ISolicitacaoCompraService _service;
 
-    public SolicitacoesCompraController(SolicitacaoCompraService service)
+    public SolicitacoesCompraController(ISolicitacaoCompraService service)
     {
         _service = service;
     }
@@ -25,7 +25,7 @@ public class SolicitacoesCompraController : ControllerBase
     public async Task<IActionResult> BuscarPorId(int id)
     {
         var s = await _service.BuscarPorIdAsync(id);
-        if (s == null) return NotFound(new { mensagem = "Solicitação não encontrada." });
+        if (s == null) return NotFound(new { mensagem = "Solicitacao nao encontrada." });
         return Ok(s);
     }
 
@@ -41,39 +41,28 @@ public class SolicitacoesCompraController : ControllerBase
     [HttpPatch("{id}/aprovar")]
     public async Task<IActionResult> Aprovar(int id)
     {
-        var (sucesso, mensagem) = await _service.AprovarAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.AprovarAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/reprovar")]
     public async Task<IActionResult> Reprovar(int id, [FromBody] ReprovarRequest request)
     {
-        var (sucesso, mensagem) = await _service.ReprovarAsync(id, request.Motivo);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.ReprovarAsync(id, request.Motivo);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/cancelar")]
     public async Task<IActionResult> Cancelar(int id)
     {
-        var (sucesso, mensagem) = await _service.CancelarAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.CancelarAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
-public record CriarSolicitacaoRequest(
-    string? Observacao,
-    List<ItemSolicitacaoRequest> Itens
-);
-
-public record ItemSolicitacaoRequest(
-    int? ProdutoId,
-    string Descricao,
-    decimal Quantidade,
-    string? Unidade,
-    string? Observacao
-);
-
+public record CriarSolicitacaoRequest(string? Observacao, List<ItemSolicitacaoRequest> Itens);
+public record ItemSolicitacaoRequest(int? ProdutoId, string Descricao, decimal Quantidade, string? Unidade, string? Observacao);
 public record ReprovarRequest(string Motivo);

@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class SolicitacaoCompraService
+public class SolicitacaoCompraService : ISolicitacaoCompraService
 {
     private readonly ISolicitacaoCompraRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -81,3 +82,4 @@ public class SolicitacaoCompraService
         return (true, "Solicitacao cancelada.");
     }
 }
+

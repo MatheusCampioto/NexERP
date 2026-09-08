@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class NotasFiscaisEntradaController : ControllerBase
 {
-    private readonly NotaFiscalEntradaService _service;
+    private readonly INotaFiscalEntradaService _service;
 
-    public NotasFiscaisEntradaController(NotaFiscalEntradaService service)
+    public NotasFiscaisEntradaController(INotaFiscalEntradaService service)
     {
         _service = service;
     }
@@ -24,7 +24,7 @@ public class NotasFiscaisEntradaController : ControllerBase
     public async Task<IActionResult> BuscarPorId(int id)
     {
         var nf = await _service.BuscarPorIdAsync(id);
-        if (nf == null) return NotFound(new { mensagem = "NF não encontrada." });
+        if (nf == null) return NotFound(new { mensagem = "NF nao encontrada." });
         return Ok(nf);
     }
 
@@ -42,28 +42,14 @@ public class NotasFiscaisEntradaController : ControllerBase
     [HttpPatch("{id}/entrada-estoque")]
     public async Task<IActionResult> DarEntradaEstoque(int id)
     {
-        var (sucesso, mensagem) = await _service.DarEntradaEstoqueAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.DarEntradaEstoqueAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
 public record CriarNFEntradaRequest(
-    int OrdemCompraId,
-    string NumeroNF,
-    string? Serie,
-    string? ChaveAcesso,
-    DateTime DataEmissao,
-    decimal ValorProdutos,
-    decimal ValorFrete,
-    decimal ValorImpostos,
-    string? Observacao,
-    List<ItemNFEntradaRequest> Itens
-);
-
-public record ItemNFEntradaRequest(
-    int? ProdutoId,
-    string Descricao,
-    decimal Quantidade,
-    decimal ValorUnitario
-);
+    int OrdemCompraId, string NumeroNF, string? Serie, string? ChaveAcesso,
+    DateTime DataEmissao, decimal ValorProdutos, decimal ValorFrete,
+    decimal ValorImpostos, string? Observacao, List<ItemNFEntradaRequest> Itens);
+public record ItemNFEntradaRequest(int? ProdutoId, string Descricao, decimal Quantidade, decimal ValorUnitario);

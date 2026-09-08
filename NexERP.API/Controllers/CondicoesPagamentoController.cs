@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class CondicoesPagamentoController : ControllerBase
 {
-    private readonly CondicaoPagamentoService _service;
+    private readonly ICondicaoPagamentoService _service;
 
-    public CondicoesPagamentoController(CondicaoPagamentoService service)
+    public CondicoesPagamentoController(ICondicaoPagamentoService service)
     {
         _service = service;
     }
@@ -33,7 +33,7 @@ public class CondicoesPagamentoController : ControllerBase
     {
         var atualizado = await _service.AtualizarAsync(id, request.Nome, request.Descricao,
             request.NumeroParcelas, request.DiasEntreParcelas, request.PrimeiroPagamentoDias);
-        if (!atualizado) return NotFound(new { mensagem = "Condição não encontrada." });
+        if (!atualizado) return NotFound(new { mensagem = "Condicao nao encontrada." });
         return NoContent();
     }
 
@@ -41,15 +41,11 @@ public class CondicoesPagamentoController : ControllerBase
     public async Task<IActionResult> Desativar(int id)
     {
         var desativado = await _service.DesativarAsync(id);
-        if (!desativado) return NotFound(new { mensagem = "Condição não encontrada." });
+        if (!desativado) return NotFound(new { mensagem = "Condicao nao encontrada." });
         return NoContent();
     }
 }
 
 public record CondicaoPagamentoRequest(
-    string Nome,
-    string? Descricao,
-    int NumeroParcelas,
-    int DiasEntreParcelas,
-    int PrimeiroPagamentoDias
-);
+    string Nome, string? Descricao, int NumeroParcelas,
+    int DiasEntreParcelas, int PrimeiroPagamentoDias);

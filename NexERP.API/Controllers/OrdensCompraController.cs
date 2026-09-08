@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class OrdensCompraController : ControllerBase
 {
-    private readonly OrdemCompraService _service;
+    private readonly IOrdemCompraService _service;
 
-    public OrdensCompraController(OrdemCompraService service)
+    public OrdensCompraController(IOrdemCompraService service)
     {
         _service = service;
     }
@@ -24,7 +24,7 @@ public class OrdensCompraController : ControllerBase
     public async Task<IActionResult> BuscarPorId(int id)
     {
         var o = await _service.BuscarPorIdAsync(id);
-        if (o == null) return NotFound(new { mensagem = "Ordem não encontrada." });
+        if (o == null) return NotFound(new { mensagem = "Ordem nao encontrada." });
         return Ok(o);
     }
 
@@ -40,34 +40,22 @@ public class OrdensCompraController : ControllerBase
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> AtualizarStatus(int id, [FromBody] AtualizarStatusOrdemRequest request)
     {
-        var (sucesso, mensagem) = await _service.AtualizarStatusAsync(id, request.Status);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.AtualizarStatusAsync(id, request.Status);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/cancelar")]
     public async Task<IActionResult> Cancelar(int id)
     {
-        var (sucesso, mensagem) = await _service.CancelarAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _service.CancelarAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
 public record CriarOrdemCompraRequest(
-    int FornecedorId,
-    int? SolicitacaoCompraId,
-    int? CondicaoPagamentoId,
-    DateTime? DataPrevista,
-    string? Observacao,
-    List<ItemOrdemCompraRequest> Itens
-);
-
-public record ItemOrdemCompraRequest(
-    int? ProdutoId,
-    string Descricao,
-    decimal Quantidade,
-    decimal ValorUnitario
-);
-
+    int FornecedorId, int? SolicitacaoCompraId, int? CondicaoPagamentoId,
+    DateTime? DataPrevista, string? Observacao, List<ItemOrdemCompraRequest> Itens);
+public record ItemOrdemCompraRequest(int? ProdutoId, string Descricao, decimal Quantidade, decimal ValorUnitario);
 public record AtualizarStatusOrdemRequest(string Status);

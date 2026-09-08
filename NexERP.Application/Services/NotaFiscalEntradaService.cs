@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class NotaFiscalEntradaService
+public class NotaFiscalEntradaService : INotaFiscalEntradaService
 {
     private readonly INotaFiscalEntradaRepository _nfRepository;
     private readonly IOrdemCompraRepository _ordemRepository;
@@ -103,3 +104,4 @@ public class NotaFiscalEntradaService
         return (true, "Estoque atualizado com sucesso.");
     }
 }
+

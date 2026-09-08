@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class CondicaoPagamentoService
+public class CondicaoPagamentoService : ICondicaoPagamentoService
 {
     private readonly ICondicaoPagamentoRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
@@ -58,3 +59,4 @@ public class CondicaoPagamentoService
         return true;
     }
 }
+
