@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NexERP.Application.Interfaces;
 using NexERP.Application.Services;
 
 namespace NexERP.API.Controllers;
@@ -9,9 +10,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class PessoasController : ControllerBase
 {
-    private readonly PessoaService _pessoaService;
+    private readonly IPessoaService _pessoaService;
 
-    public PessoasController(PessoaService pessoaService)
+    public PessoasController(IPessoaService pessoaService)
     {
         _pessoaService = pessoaService;
     }
@@ -25,7 +26,7 @@ public class PessoasController : ControllerBase
     {
         var pessoa = await _pessoaService.BuscarPorIdAsync(id);
         if (pessoa == null)
-            return NotFound(new { mensagem = "Pessoa não encontrada." });
+            return NotFound(new { mensagem = "Pessoa nao encontrada." });
         return Ok(pessoa);
     }
 
@@ -41,7 +42,7 @@ public class PessoasController : ControllerBase
     {
         var atualizado = await _pessoaService.AtualizarAsync(id, request.ToDto());
         if (!atualizado)
-            return NotFound(new { mensagem = "Pessoa não encontrada." });
+            return NotFound(new { mensagem = "Pessoa nao encontrada." });
         return NoContent();
     }
 
@@ -50,46 +51,24 @@ public class PessoasController : ControllerBase
     {
         var desativado = await _pessoaService.DesativarAsync(id);
         if (!desativado)
-            return NotFound(new { mensagem = "Pessoa não encontrada." });
+            return NotFound(new { mensagem = "Pessoa nao encontrada." });
         return NoContent();
     }
 }
 
 public record PessoaRequest(
-    string TipoDocumento,
-    string Tipo,
-    string? Funcao,
-    string? Nome,
-    string? CPF,
-    string? RG,
-    DateTime? DataNascimento,
-    string? EstadoCivil,
-    string? Profissao,
-    string? RazaoSocial,
-    string? NomeFantasia,
-    string? CNPJ,
-    string? InscricaoEstadual,
-    string? InscricaoMunicipal,
-    string? NomeContato,
-    string? Site,
-    string? Email,
-    string? Telefone,
-    string? Celular,
-    string? CEP,
-    string? Endereco,
-    string? Numero,
-    string? Complemento,
-    string? Bairro,
-    string? Cidade,
-    string? Estado,
-    string? Observacao
-)
+    string TipoDocumento, string Tipo, string? Funcao, string? Nome,
+    string? CPF, string? RG, DateTime? DataNascimento, string? EstadoCivil,
+    string? Profissao, string? RazaoSocial, string? NomeFantasia, string? CNPJ,
+    string? InscricaoEstadual, string? InscricaoMunicipal, string? NomeContato,
+    string? Site, string? Email, string? Telefone, string? Celular,
+    string? CEP, string? Endereco, string? Numero, string? Complemento,
+    string? Bairro, string? Cidade, string? Estado, string? Observacao)
 {
     public PessoaDto ToDto() => new(
         TipoDocumento, Tipo, Funcao, Nome, CPF, RG, DataNascimento,
         EstadoCivil, Profissao, RazaoSocial, NomeFantasia, CNPJ,
         InscricaoEstadual, InscricaoMunicipal, NomeContato, Site,
         Email, Telefone, Celular, CEP, Endereco, Numero, Complemento,
-        Bairro, Cidade, Estado, Observacao
-    );
+        Bairro, Cidade, Estado, Observacao);
 }

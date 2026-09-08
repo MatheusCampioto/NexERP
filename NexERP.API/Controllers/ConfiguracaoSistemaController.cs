@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NexERP.Application.Services;
 using NexERP.Domain.Entities;
@@ -28,6 +28,6 @@ public class ConfiguracaoSistemaController : ControllerBase
     public async Task<IActionResult> Salvar([FromBody] ConfiguracaoSistema request)
     {
         await _service.SalvarAsync(request);
-        return Ok(new { mensagem = "Configurações salvas com sucesso." });
+        return Ok(new { mensagem = "Configuracoes salvas com sucesso." });
     }
 }

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Enums;
 
 namespace NexERP.API.Controllers;
@@ -10,9 +10,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class PedidosController : ControllerBase
 {
-    private readonly PedidoService _pedidoService;
+    private readonly IPedidoService _pedidoService;
 
-    public PedidosController(PedidoService pedidoService)
+    public PedidosController(IPedidoService pedidoService)
     {
         _pedidoService = pedidoService;
     }
@@ -26,7 +26,7 @@ public class PedidosController : ControllerBase
     {
         var pedido = await _pedidoService.BuscarPorIdAsync(id);
         if (pedido == null)
-            return NotFound(new { mensagem = "Pedido não encontrado." });
+            return NotFound(new { mensagem = "Pedido nao encontrado." });
         return Ok(pedido);
     }
 
@@ -34,18 +34,11 @@ public class PedidosController : ControllerBase
     public async Task<IActionResult> Criar([FromBody] CriarPedidoRequest request)
     {
         var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
-
         var resultado = await _pedidoService.CriarAsync(
-            request.PessoaId,
-            request.Observacao,
-            request.CondicaoPagamentoId,
-            request.FormaPagamento,
-            request.Desconto,
-            itens);
-
+            request.PessoaId, request.Observacao, request.CondicaoPagamentoId,
+            request.FormaPagamento, request.Desconto, itens);
         if (!resultado.sucesso)
             return BadRequest(new { mensagem = resultado.mensagem });
-
         return StatusCode(201, resultado.pedido);
     }
 
@@ -53,19 +46,11 @@ public class PedidosController : ControllerBase
     public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarPedidoRequest request)
     {
         var itens = request.Itens.Select(i => (i.ProdutoId, i.Quantidade, i.Desconto)).ToList();
-
         var resultado = await _pedidoService.AtualizarAsync(
-            id,
-            request.PessoaId,
-            request.Observacao,
-            request.CondicaoPagamentoId,
-            request.FormaPagamento,
-            request.Desconto,
-            itens);
-
+            id, request.PessoaId, request.Observacao, request.CondicaoPagamentoId,
+            request.FormaPagamento, request.Desconto, itens);
         if (!resultado.sucesso)
             return BadRequest(new { mensagem = resultado.mensagem });
-
         return NoContent();
     }
 
@@ -89,21 +74,11 @@ public class PedidosController : ControllerBase
 }
 
 public record CriarPedidoRequest(
-    int PessoaId,
-    string? Observacao,
-    int? CondicaoPagamentoId,
-    FormaPagamento? FormaPagamento,
-    decimal Desconto,
-    List<ItemPedidoRequest> Itens
-);
+    int PessoaId, string? Observacao, int? CondicaoPagamentoId,
+    FormaPagamento? FormaPagamento, decimal Desconto, List<ItemPedidoRequest> Itens);
 
 public record AtualizarPedidoRequest(
-    int PessoaId,
-    string? Observacao,
-    int? CondicaoPagamentoId,
-    FormaPagamento? FormaPagamento,
-    decimal Desconto,
-    List<ItemPedidoRequest> Itens
-);
+    int PessoaId, string? Observacao, int? CondicaoPagamentoId,
+    FormaPagamento? FormaPagamento, decimal Desconto, List<ItemPedidoRequest> Itens);
 
 public record ItemPedidoRequest(int ProdutoId, int Quantidade, decimal Desconto);
