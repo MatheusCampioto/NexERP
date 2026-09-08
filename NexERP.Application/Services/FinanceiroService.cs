@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class FinanceiroService
+public class FinanceiroService : IFinanceiroService
 {
     private readonly ILancamentoFinanceiroRepository _lancamentoRepository;
     private readonly IContaBancariaRepository _contaRepository;
@@ -136,3 +137,4 @@ public class FinanceiroService
         };
     }
 }
+

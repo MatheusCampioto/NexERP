@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class ContaBancariaService
+public class ContaBancariaService : IContaBancariaService
 {
     private readonly IContaBancariaRepository _contaRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -61,3 +62,4 @@ public class ContaBancariaService
         return true;
     }
 }
+

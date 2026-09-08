@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class EstoqueController : ControllerBase
 {
-    private readonly EstoqueService _estoqueService;
+    private readonly IEstoqueService _estoqueService;
 
-    public EstoqueController(EstoqueService estoqueService)
+    public EstoqueController(IEstoqueService estoqueService)
     {
         _estoqueService = estoqueService;
     }
@@ -27,25 +27,21 @@ public class EstoqueController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Movimentar([FromBody] MovimentacaoRequest request)
     {
-        var (sucesso, mensagem) = await _estoqueService.MovimentarAsync(
+        var resultado = await _estoqueService.MovimentarAsync(
             request.ProdutoId, request.Tipo, request.Quantidade, request.Observacao);
-
-        if (!sucesso)
-            return BadRequest(new { mensagem });
-
-        return StatusCode(201, new { mensagem });
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
+        return StatusCode(201, new { mensagem = resultado.mensagem });
     }
 
     [HttpPost("inventario")]
     public async Task<IActionResult> AjustarInventario([FromBody] InventarioRequest request)
     {
-        var (sucesso, mensagem) = await _estoqueService.AjustarInventarioAsync(
+        var resultado = await _estoqueService.AjustarInventarioAsync(
             request.ProdutoId, request.QuantidadeReal, request.Observacao);
-
-        if (!sucesso)
-            return BadRequest(new { mensagem });
-
-        return Ok(new { mensagem });
+        if (!resultado.sucesso)
+            return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 

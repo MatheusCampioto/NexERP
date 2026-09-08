@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class CategoriaService
+public class CategoriaService : ICategoriaService
 {
     private readonly ICategoriaRepository _categoriaRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -46,3 +47,4 @@ public class CategoriaService
         return true;
     }
 }
+

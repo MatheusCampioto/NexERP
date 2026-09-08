@@ -1,9 +1,10 @@
 ﻿using NexERP.Domain.Entities;
+using NexERP.Application.Interfaces;
 using NexERP.Domain.Interfaces;
 
 namespace NexERP.Application.Services;
 
-public class EstoqueService
+public class EstoqueService : IEstoqueService
 {
     private readonly IMovimentacaoEstoqueRepository _movimentacaoRepository;
     private readonly IProdutoRepository _produtoRepository;
@@ -84,3 +85,4 @@ public class EstoqueService
         return (true, $"Inventario ajustado. Diferenca: {(diferenca > 0 ? "+" : "")}{diferenca}");
     }
 }
+

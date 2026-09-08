@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class CategoriasController : ControllerBase
 {
-    private readonly CategoriaService _categoriaService;
+    private readonly ICategoriaService _categoriaService;
 
-    public CategoriasController(CategoriaService categoriaService)
+    public CategoriasController(ICategoriaService categoriaService)
     {
         _categoriaService = categoriaService;
     }
@@ -31,7 +31,7 @@ public class CategoriasController : ControllerBase
     public async Task<IActionResult> Atualizar(int id, [FromBody] CategoriaRequest request)
     {
         var atualizado = await _categoriaService.AtualizarAsync(id, request.Nome, request.Descricao);
-        if (!atualizado) return NotFound(new { mensagem = "Categoria não encontrada." });
+        if (!atualizado) return NotFound(new { mensagem = "Categoria nao encontrada." });
         return NoContent();
     }
 
@@ -39,7 +39,7 @@ public class CategoriasController : ControllerBase
     public async Task<IActionResult> Desativar(int id)
     {
         var desativado = await _categoriaService.DesativarAsync(id);
-        if (!desativado) return NotFound(new { mensagem = "Categoria não encontrada." });
+        if (!desativado) return NotFound(new { mensagem = "Categoria nao encontrada." });
         return NoContent();
     }
 }

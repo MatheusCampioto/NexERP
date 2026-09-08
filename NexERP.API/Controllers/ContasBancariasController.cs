@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class ContasBancariasController : ControllerBase
 {
-    private readonly ContaBancariaService _contaService;
+    private readonly IContaBancariaService _contaService;
 
-    public ContasBancariasController(ContaBancariaService contaService)
+    public ContasBancariasController(IContaBancariaService contaService)
     {
         _contaService = contaService;
     }
@@ -25,7 +25,7 @@ public class ContasBancariasController : ControllerBase
     {
         var conta = await _contaService.BuscarPorIdAsync(id);
         if (conta == null)
-            return NotFound(new { mensagem = "Conta não encontrada." });
+            return NotFound(new { mensagem = "Conta nao encontrada." });
         return Ok(conta);
     }
 
@@ -44,7 +44,7 @@ public class ContasBancariasController : ControllerBase
         var atualizado = await _contaService.AtualizarAsync(
             id, request.Nome, request.Banco, request.Agencia, request.NumeroConta);
         if (!atualizado)
-            return NotFound(new { mensagem = "Conta não encontrada." });
+            return NotFound(new { mensagem = "Conta nao encontrada." });
         return NoContent();
     }
 
@@ -53,15 +53,10 @@ public class ContasBancariasController : ControllerBase
     {
         var desativado = await _contaService.DesativarAsync(id);
         if (!desativado)
-            return NotFound(new { mensagem = "Conta não encontrada." });
+            return NotFound(new { mensagem = "Conta nao encontrada." });
         return NoContent();
     }
 }
 
 public record ContaBancariaRequest(
-    string Nome,
-    string? Banco,
-    string? Agencia,
-    string? NumeroConta,
-    decimal SaldoInicial
-);
+    string Nome, string? Banco, string? Agencia, string? NumeroConta, decimal SaldoInicial);

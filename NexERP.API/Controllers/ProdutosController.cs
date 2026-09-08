@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NexERP.Application.Interfaces;
 using NexERP.Application.Services;
 
 namespace NexERP.API.Controllers;
@@ -9,9 +10,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class ProdutosController : ControllerBase
 {
-    private readonly ProdutoService _produtoService;
+    private readonly IProdutoService _produtoService;
 
-    public ProdutosController(ProdutoService produtoService)
+    public ProdutosController(IProdutoService produtoService)
     {
         _produtoService = produtoService;
     }
@@ -25,7 +26,7 @@ public class ProdutosController : ControllerBase
     {
         var produto = await _produtoService.BuscarPorIdAsync(id);
         if (produto == null)
-            return NotFound(new { mensagem = "Produto não encontrado." });
+            return NotFound(new { mensagem = "Produto nao encontrado." });
         return Ok(produto);
     }
 
@@ -41,7 +42,7 @@ public class ProdutosController : ControllerBase
     {
         var atualizado = await _produtoService.AtualizarAsync(id, request.ToDto());
         if (!atualizado)
-            return NotFound(new { mensagem = "Produto não encontrado." });
+            return NotFound(new { mensagem = "Produto nao encontrado." });
         return NoContent();
     }
 
@@ -50,55 +51,26 @@ public class ProdutosController : ControllerBase
     {
         var desativado = await _produtoService.DesativarAsync(id);
         if (!desativado)
-            return NotFound(new { mensagem = "Produto não encontrado." });
+            return NotFound(new { mensagem = "Produto nao encontrado." });
         return NoContent();
     }
 }
 
 public record ProdutoRequest(
-    string Nome,
-    string? Descricao,
-    string? Codigo,
-    string? CodigoBarras,
-    decimal PrecoVenda,
-    decimal PrecoCusto,
-    decimal? PrecoMinimo,
-    string? Unidade,
-    int? CategoriaId,
-    int? FornecedorId,
-    int EstoqueMinimo,
-    int? EstoqueMaximo,
-    string? LocalizacaoEstoque,
-    bool ControlaValidade,
-    int? DiasValidade,
-    string? NCM,
-    string? CEST,
-    string? CFOP,
-    string? OrigemMercadoria,
-    string? CSOSN,
-    string? CST_ICMS,
-    string? CST_PIS,
-    string? CST_COFINS,
-    decimal? AliquotaICMS,
-    decimal? AliquotaIPI,
-    decimal? AliquotaPIS,
-    decimal? AliquotaCOFINS,
-    decimal? PesoBruto,
-    decimal? PesoLiquido,
-    decimal? Altura,
-    decimal? Largura,
-    decimal? Comprimento
-)
+    string Nome, string? Descricao, string? Codigo, string? CodigoBarras,
+    decimal PrecoVenda, decimal PrecoCusto, decimal? PrecoMinimo, string? Unidade,
+    int? CategoriaId, int? FornecedorId, int EstoqueMinimo, int? EstoqueMaximo,
+    string? LocalizacaoEstoque, bool ControlaValidade, int? DiasValidade,
+    string? NCM, string? CEST, string? CFOP, string? OrigemMercadoria,
+    string? CSOSN, string? CST_ICMS, string? CST_PIS, string? CST_COFINS,
+    decimal? AliquotaICMS, decimal? AliquotaIPI, decimal? AliquotaPIS, decimal? AliquotaCOFINS,
+    decimal? PesoBruto, decimal? PesoLiquido, decimal? Altura, decimal? Largura, decimal? Comprimento)
 {
     public ProdutoDto ToDto() => new(
-        Nome, Descricao, Codigo, CodigoBarras,
-        PrecoVenda, PrecoCusto, PrecoMinimo,
-        Unidade, CategoriaId, FornecedorId,
-        EstoqueMinimo, EstoqueMaximo, LocalizacaoEstoque,
-        ControlaValidade, DiasValidade,
-        NCM, CEST, CFOP, OrigemMercadoria,
+        Nome, Descricao, Codigo, CodigoBarras, PrecoVenda, PrecoCusto, PrecoMinimo,
+        Unidade, CategoriaId, FornecedorId, EstoqueMinimo, EstoqueMaximo, LocalizacaoEstoque,
+        ControlaValidade, DiasValidade, NCM, CEST, CFOP, OrigemMercadoria,
         CSOSN, CST_ICMS, CST_PIS, CST_COFINS,
         AliquotaICMS, AliquotaIPI, AliquotaPIS, AliquotaCOFINS,
-        PesoBruto, PesoLiquido, Altura, Largura, Comprimento
-    );
+        PesoBruto, PesoLiquido, Altura, Largura, Comprimento);
 }

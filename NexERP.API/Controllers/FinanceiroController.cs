@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NexERP.Application.Services;
+using NexERP.Application.Interfaces;
 
 namespace NexERP.API.Controllers;
 
@@ -9,9 +9,9 @@ namespace NexERP.API.Controllers;
 [Authorize]
 public class FinanceiroController : ControllerBase
 {
-    private readonly FinanceiroService _financeiroService;
+    private readonly IFinanceiroService _financeiroService;
 
-    public FinanceiroController(FinanceiroService financeiroService)
+    public FinanceiroController(IFinanceiroService financeiroService)
     {
         _financeiroService = financeiroService;
     }
@@ -33,7 +33,7 @@ public class FinanceiroController : ControllerBase
     {
         var lancamento = await _financeiroService.BuscarPorIdAsync(id);
         if (lancamento == null)
-            return NotFound(new { mensagem = "Lançamento não encontrado." });
+            return NotFound(new { mensagem = "Lancamento nao encontrado." });
         return Ok(lancamento);
     }
 
@@ -54,28 +54,21 @@ public class FinanceiroController : ControllerBase
     [HttpPatch("{id}/baixar")]
     public async Task<IActionResult> Baixar(int id)
     {
-        var (sucesso, mensagem) = await _financeiroService.BaixarAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _financeiroService.BaixarAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 
     [HttpPatch("{id}/cancelar")]
     public async Task<IActionResult> Cancelar(int id)
     {
-        var (sucesso, mensagem) = await _financeiroService.CancelarAsync(id);
-        if (!sucesso) return BadRequest(new { mensagem });
-        return Ok(new { mensagem });
+        var resultado = await _financeiroService.CancelarAsync(id);
+        if (!resultado.sucesso) return BadRequest(new { mensagem = resultado.mensagem });
+        return Ok(new { mensagem = resultado.mensagem });
     }
 }
 
 public record LancamentoRequest(
-    string Tipo,
-    string Descricao,
-    decimal Valor,
-    DateTime DataVencimento,
-    string? Categoria,
-    int? PessoaId,
-    string? FormaPagamento,
-    int? ContaBancariaId,
-    int TotalParcelas = 1
-);
+    string Tipo, string Descricao, decimal Valor, DateTime DataVencimento,
+    string? Categoria, int? PessoaId, string? FormaPagamento, int? ContaBancariaId,
+    int TotalParcelas = 1);
